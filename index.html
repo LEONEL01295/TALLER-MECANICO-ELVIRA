@@ -1,562 +1,3335 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SCADA Master — Portal de Descargas | Hitech Ingenium Labs</title>
-
-<!-- ICONO DE LA PÁGINA -->
-<link rel="icon" type="image/png" sizes="32x32" href="gemini-svg.png?v=5">
-<link rel="icon" type="image/png" sizes="192x192" href="gemini-svg.png?v=5">
-<link rel="apple-touch-icon" sizes="180x180" href="gemini-svg.png?v=5">
-<meta name="theme-color" content="#080C14">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5, user-scalable=yes" />
+<meta name="theme-color" content="#DC2626" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Taller Elvira" />
+<meta name="application-name" content="Taller Elvira" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="description" content="Sistema de gestión para Taller Elvira: clientes, vehículos, servicios, inventario y recordatorios automáticos." />
+<link rel="manifest" href="manifest.json" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png" />
+<title>Taller Elvira — Sistema de Gestión</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23DC2626'/%3E%3Cpath fill='white' d='M68 32a14 14 0 0 0-19 17L29 69a6 6 0 1 0 8 8l20-20a14 14 0 0 0 18-19l-7 7-6-2-2-6 8-5z'/%3E%3C/svg%3E" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#080C14;--surface:#0D1220;--surface2:#121929;--surface3:#1A2338;
-  --border:#1E2D47;--border2:#253450;--green:#00E676;--green-glow:rgba(0,230,118,0.12);
-  --green-glow2:rgba(0,230,118,0.06);--blue:#2979FF;--blue-glow:rgba(41,121,255,0.12);
-  --cyan:#00B8D4;--text:#F0F4FC;--text2:#8B9AB5;--text3:#5A6E8A;
-  --tag-bg:#0D1A2E;--radius:12px;--radius-sm:8px;--radius-lg:20px;
-}
-html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:16px;line-height:1.65;overflow-x:hidden;}
-nav{position:sticky;top:0;z-index:100;background:rgba(8,12,20,0.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 40px;display:flex;align-items:center;gap:32px;height:60px;}
-.nav-brand{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:500;color:var(--green);letter-spacing:2px;text-transform:uppercase;white-space:nowrap;}
-.nav-links{display:flex;gap:24px;align-items:center;flex:1}
-.nav-links a{font-size:14px;color:var(--text2);text-decoration:none;transition:color .2s;white-space:nowrap;}
-.nav-links a:hover{color:var(--text)}
-.nav-cta{margin-left:auto;background:var(--green);color:#000;border:none;padding:9px 22px;border-radius:var(--radius-sm);font-size:14px;font-weight:600;cursor:pointer;text-decoration:none;white-space:nowrap;transition:opacity .2s;}
-.nav-cta:hover{opacity:.9}
-.hero{position:relative;padding:90px 40px 80px;text-align:center;overflow:hidden;}
-.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 50% 0%, rgba(0,230,118,0.08) 0%, transparent 70%),radial-gradient(ellipse 40% 40% at 15% 80%, rgba(41,121,255,0.06) 0%, transparent 60%);pointer-events:none;}
-.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;background:var(--green-glow);border:1px solid rgba(0,230,118,0.2);border-radius:100px;padding:6px 16px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--green);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:28px;}
-.hero-eyebrow span{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s ease-in-out infinite;}
-@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.8)}}
-.hero h1{font-size:clamp(2.4rem,5vw,4.2rem);font-weight:700;line-height:1.1;letter-spacing:-1px;margin-bottom:12px;}
-.hero h1 .brand-name{background:linear-gradient(135deg,#FFFFFF 0%,#8B9AB5 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-.hero h1 .accent{background:linear-gradient(135deg,var(--green) 0%,var(--cyan) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-.hero-sub{max-width:680px;margin:0 auto 48px;color:var(--text2);font-size:1.15rem;font-weight:400;}
-.hero-version-badge{display:inline-flex;align-items:center;gap:6px;background:var(--surface2);border:1px solid var(--border2);border-radius:100px;padding:4px 14px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text2);margin-bottom:40px;}
-.hero-downloads{display:flex;gap:20px;justify-content:center;flex-wrap:wrap;margin-bottom:60px;}
-.dl-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:32px 28px;width:280px;text-align:left;position:relative;overflow:hidden;transition:transform .25s,border-color .25s,box-shadow .25s;}
-.dl-card:hover{transform:translateY(-4px);border-color:var(--border2);}
-.dl-card.android:hover{box-shadow:0 16px 48px rgba(0,230,118,0.08)}
-.dl-card.windows:hover{box-shadow:0 16px 48px rgba(41,121,255,0.08)}
-.dl-card::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
-.dl-card.android::after{background:linear-gradient(90deg,var(--green),transparent)}
-.dl-card.windows::after{background:linear-gradient(90deg,var(--blue),transparent)}
-.dl-platform-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:20px;font-size:22px;}
-.android .dl-platform-icon{background:rgba(0,230,118,0.1);color:var(--green)}
-.windows .dl-platform-icon{background:rgba(41,121,255,0.1);color:var(--blue)}
-.dl-card h3{font-size:1.1rem;font-weight:600;margin-bottom:6px}
-.dl-card .dl-os{font-size:12px;color:var(--text3);font-family:'JetBrains Mono',monospace;margin-bottom:20px;}
-.dl-card .dl-specs{list-style:none;font-size:13px;color:var(--text2);margin-bottom:24px;display:flex;flex-direction:column;gap:6px;}
-.dl-card .dl-specs li{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);}
-.dl-card .dl-specs li:last-child{border-bottom:none}
-.dl-card .dl-specs .spec-val{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text);font-weight:500;}
-.btn-dl{display:flex;align-items:center;justify-content:center;gap:8px;padding:12px 16px;border-radius:var(--radius-sm);font-size:14px;font-weight:600;text-decoration:none;width:100%;transition:filter .2s,transform .1s,opacity .2s;cursor:pointer;border:none;font-family:'Space Grotesk',sans-serif;}
-.btn-dl:active{transform:scale(.98)}
-.android .btn-dl{background:var(--green);color:#000}
-.windows .btn-dl{background:var(--blue);color:#fff}
-.btn-dl:hover{filter:brightness(1.08)}
-.btn-dl:disabled{opacity:.5;cursor:not-allowed;filter:none;}
-.btn-dl svg{width:16px;height:16px;flex-shrink:0}
-.dl-secondary-links{display:flex;gap:12px;margin-top:10px;justify-content:center;}
-.dl-link-sm{font-size:12px;color:var(--text3);text-decoration:none;border-bottom:1px dashed var(--border2);padding-bottom:1px;transition:color .2s;}
-.dl-link-sm:hover{color:var(--text2)}
+  :root {
+    --bg: #FAF7F2;
+    --surface: #FFFFFF;
+    --border: #E8E4DC;
+    --border-strong: #D6D1C6;
+    --ink: #1A1814;
+    --ink-soft: #5C574F;
+    --ink-muted: #908A7E;
+    --sidebar: #16130E;
+    --sidebar-soft: #2A251E;
+    --sidebar-text: #C9C5BD;
+    --accent: #DC2626;
+    --accent-hover: #B91C1C;
+    --accent-soft: #FEE2E2;
+    --success: #16A34A;
+    --success-soft: #DCFCE7;
+    --warning: #CA8A04;
+    --warning-soft: #FEF9C3;
+    --danger: #991B1B;
+    --danger-soft: #FECACA;
+  }
+  * { -webkit-font-smoothing: antialiased; }
+  body {
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(0,0,0,0.025) 1px, transparent 0);
+    background-size: 24px 24px;
+  }
+  .font-display { font-family: 'Fraunces', serif; font-optical-sizing: auto; letter-spacing: -0.02em; }
+  .font-mono { font-family: 'JetBrains Mono', monospace; }
+  .serif-italic { font-family: 'Fraunces', serif; font-style: italic; }
 
-/* ── TOAST ── */
-.toast{
-  position:fixed;bottom:28px;right:28px;z-index:9999;
-  background:var(--surface2);border:1px solid var(--border2);
-  border-radius:var(--radius);padding:14px 20px;
-  display:flex;align-items:center;gap:10px;
-  font-size:14px;color:var(--text);
-  box-shadow:0 8px 32px rgba(0,0,0,0.4);
-  transform:translateY(80px);opacity:0;
-  transition:transform .35s ease,opacity .35s ease;
-  pointer-events:none;
-}
-.toast.show{transform:translateY(0);opacity:1;}
-.toast-icon{font-size:18px}
+  /* Sidebar */
+  .sidebar { background: var(--sidebar); color: var(--sidebar-text); }
+  .nav-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 14px; border-radius: 8px;
+    color: var(--sidebar-text); font-weight: 500; font-size: 14px;
+    transition: all 0.15s ease;
+    cursor: pointer;
+  }
+  .nav-item:hover { background: var(--sidebar-soft); color: white; }
+  .nav-item.active { background: var(--accent); color: white; }
+  .nav-item.active .nav-badge { background: rgba(255,255,255,0.25); }
+  .nav-badge {
+    margin-left: auto;
+    background: var(--sidebar-soft);
+    color: white;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 99px;
+    font-family: 'JetBrains Mono', monospace;
+  }
 
-.stats-row{display:flex;justify-content:center;gap:0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);flex-wrap:wrap;}
-.stat-cell{flex:1;min-width:180px;padding:32px 24px;text-align:center;border-right:1px solid var(--border);}
-.stat-cell:last-child{border-right:none}
-.stat-num{font-size:2rem;font-weight:700;background:linear-gradient(135deg,var(--green),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;display:block;line-height:1;margin-bottom:6px;}
-.stat-label{font-size:13px;color:var(--text2)}
-.section{padding:80px 40px}
-.container{max-width:1100px;margin:0 auto}
-.section-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;color:var(--green);text-transform:uppercase;margin-bottom:12px;}
-.section-title{font-size:clamp(1.6rem,3vw,2.4rem);font-weight:700;letter-spacing:-.5px;margin-bottom:16px;line-height:1.2;}
-.section-desc{color:var(--text2);font-size:1rem;max-width:560px;line-height:1.7;margin-bottom:48px;}
-.modules-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px;}
-.module-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px 24px;display:flex;gap:18px;transition:border-color .25s,background .25s;}
-.module-card:hover{border-color:var(--border2);background:var(--surface2);}
-.module-icon{width:44px;height:44px;flex-shrink:0;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;}
-.module-card h4{font-size:1rem;font-weight:600;margin-bottom:5px}
-.module-card p{font-size:13px;color:var(--text2);line-height:1.55}
-.module-tag{display:inline-block;margin-top:10px;font-size:11px;font-family:'JetBrains Mono',monospace;background:var(--tag-bg);border:1px solid var(--border2);color:var(--text3);padding:2px 10px;border-radius:100px;}
-.feature-split{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;}
-@media(max-width:768px){.feature-split{grid-template-columns:1fr}}
-.feature-list{display:flex;flex-direction:column;gap:24px}
-.feature-item{display:flex;gap:16px;align-items:flex-start;padding:20px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);transition:border-color .2s;}
-.feature-item:hover{border-color:var(--border2)}
-.feature-icon{width:40px;height:40px;flex-shrink:0;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;background:var(--green-glow2);color:var(--green);}
-.feature-item h4{font-size:.95rem;font-weight:600;margin-bottom:4px}
-.feature-item p{font-size:13px;color:var(--text2);line-height:1.55}
-.app-mockup{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;}
-.mockup-topbar{background:var(--surface2);border-bottom:1px solid var(--border);padding:14px 18px;display:flex;align-items:center;gap:8px;}
-.mockup-dot{width:10px;height:10px;border-radius:50%}
-.mockup-title{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text3);margin-left:8px;}
-.mockup-body{padding:24px}
-.mockup-gauge-row{display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap}
-.gauge-block{flex:1;min-width:100px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;text-align:center;}
-.gauge-val{font-family:'JetBrains Mono',monospace;font-size:1.4rem;font-weight:600;color:var(--green);}
-.gauge-unit{font-size:11px;color:var(--text3);display:block}
-.gauge-label{font-size:12px;color:var(--text2);margin-top:4px}
-.mockup-chart-area{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px;position:relative;overflow:hidden;height:120px;display:flex;align-items:flex-end;gap:4px;}
-.bar{flex:1;border-radius:3px 3px 0 0;background:linear-gradient(180deg,rgba(0,230,118,.7),rgba(0,230,118,.2));}
-.mockup-alarm{margin-top:12px;background:rgba(0,230,118,.06);border:1px solid rgba(0,230,118,.15);border-radius:var(--radius-sm);padding:10px 14px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--green);display:flex;align-items:center;gap:8px;}
-.alarm-dot{width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 1.5s ease-in-out infinite;}
-.tech-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;}
-.tech-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 18px;display:flex;align-items:center;gap:14px;transition:border-color .2s;}
-.tech-item:hover{border-color:var(--border2)}
-.tech-item-icon{font-size:22px;width:40px;text-align:center;flex-shrink:0}
-.tech-item h5{font-size:.9rem;font-weight:600;margin-bottom:2px}
-.tech-item span{font-size:12px;color:var(--text3)}
-.install-grid{display:grid;grid-template-columns:1fr 1fr;gap:32px}
-@media(max-width:700px){.install-grid{grid-template-columns:1fr}}
-.install-block{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;}
-.install-header{padding:20px 24px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border);}
-.install-header.android-h{background:rgba(0,230,118,0.05)}
-.install-header.windows-h{background:rgba(41,121,255,0.05)}
-.install-header h4{font-size:1rem;font-weight:600}
-.install-header span{font-size:13px;color:var(--text2);display:block;margin-top:2px}
-.install-os-badge{font-family:'JetBrains Mono',monospace;font-size:11px;padding:3px 10px;border-radius:100px;}
-.android-badge{background:rgba(0,230,118,.1);color:var(--green);border:1px solid rgba(0,230,118,.2)}
-.windows-badge{background:rgba(41,121,255,.1);color:var(--blue);border:1px solid rgba(41,121,255,.2)}
-.install-steps{padding:24px;display:flex;flex-direction:column;gap:0}
-.step-row{display:flex;gap:16px;align-items:flex-start;padding-bottom:22px;position:relative;}
-.step-row::before{content:'';position:absolute;left:15px;top:32px;bottom:0;width:1px;background:var(--border);}
-.step-row:last-child::before{display:none}
-.step-row:last-child{padding-bottom:0}
-.step-num{width:30px;height:30px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;border:1px solid var(--border2);background:var(--surface2);color:var(--text2);position:relative;z-index:1;}
-.android-block .step-num.done{border-color:var(--green);color:var(--green);background:rgba(0,230,118,.08)}
-.windows-block .step-num.done{border-color:var(--blue);color:var(--blue);background:rgba(41,121,255,.08)}
-.step-content h5{font-size:.9rem;font-weight:600;margin-bottom:3px;margin-top:4px}
-.step-content p{font-size:13px;color:var(--text2);line-height:1.55}
-.step-content code{font-family:'JetBrains Mono',monospace;font-size:12px;background:var(--surface3);border:1px solid var(--border2);color:var(--cyan);padding:2px 7px;border-radius:4px;}
-.step-warning{display:flex;gap:8px;align-items:flex-start;background:rgba(255,171,0,0.06);border:1px solid rgba(255,171,0,0.15);border-radius:var(--radius-sm);padding:10px 12px;margin-top:8px;font-size:12px;color:#FFD54F;}
-.req-table{width:100%;border-collapse:collapse;font-size:14px}
-.req-table th{text-align:left;padding:12px 16px;font-size:12px;font-weight:600;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;border-bottom:1px solid var(--border);}
-.req-table td{padding:14px 16px;border-bottom:1px solid var(--border);color:var(--text2);vertical-align:top;}
-.req-table td:first-child{font-weight:500;color:var(--text);width:35%}
-.req-table tr:last-child td{border-bottom:none}
-.req-ok{color:var(--green);font-size:13px}
-.req-tag{font-family:'JetBrains Mono',monospace;font-size:12px;background:var(--tag-bg);border:1px solid var(--border2);color:var(--text2);padding:2px 8px;border-radius:4px;display:inline-block;margin:1px 2px;}
-.req-panels{display:grid;grid-template-columns:1fr 1fr;gap:24px}
-@media(max-width:700px){.req-panels{grid-template-columns:1fr}}
-.req-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
-.req-panel-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;font-weight:600;font-size:.95rem;}
-.req-panel-header.a-h{background:rgba(0,230,118,0.04)}
-.req-panel-header.w-h{background:rgba(41,121,255,0.04)}
-.info-box{display:flex;gap:16px;align-items:flex-start;background:rgba(0,184,212,0.06);border:1px solid rgba(0,184,212,0.2);border-radius:var(--radius);padding:20px 22px;font-size:14px;color:var(--text2);}
-.info-box-icon{font-size:22px;flex-shrink:0;margin-top:1px;color:var(--cyan)}
-.info-box strong{color:var(--text)}
-.faq-list{display:flex;flex-direction:column;gap:12px}
-.faq-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
-.faq-q{padding:18px 22px;font-size:.95rem;font-weight:600;cursor:pointer;display:flex;justify-content:space-between;align-items:center;user-select:none;transition:background .2s;}
-.faq-q:hover{background:var(--surface2)}
-.faq-q span{font-size:18px;color:var(--text3);transition:transform .3s;font-weight:300}
-.faq-item.open .faq-q span{transform:rotate(45deg)}
-.faq-a{display:none;padding:16px 22px 18px;font-size:14px;color:var(--text2);line-height:1.7;border-top:1px solid var(--border);}
-.faq-item.open .faq-a{display:block}
-footer{border-top:1px solid var(--border);padding:40px;text-align:center;}
-.footer-brand{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--green);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;}
-footer p{font-size:13px;color:var(--text3)}
-.footer-links{display:flex;justify-content:center;gap:24px;margin-top:16px;flex-wrap:wrap;}
-.footer-links a{font-size:13px;color:var(--text3);text-decoration:none;transition:color .2s}
-.footer-links a:hover{color:var(--text2)}
-@media(max-width:900px){nav{padding:0 20px;gap:16px}.nav-links{display:none}.section{padding:60px 20px}.hero{padding:60px 20px 60px}.stats-row{flex-direction:column}.stat-cell{border-right:none;border-bottom:1px solid var(--border)}.stat-cell:last-child{border-bottom:none}}
-@media(max-width:600px){.hero-downloads{flex-direction:column;align-items:center}.dl-card{width:100%;max-width:340px}footer{padding:40px 20px}}
+  /* Cards */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+  }
+  .card-tight { padding: 16px; }
+  .card-pad { padding: 22px; }
+
+  /* Buttons */
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 9px 16px; border-radius: 9px; font-weight: 600; font-size: 14px; transition: all 0.15s; cursor: pointer; border: 1px solid transparent; white-space: nowrap; }
+  .btn-primary { background: var(--accent); color: white; }
+  .btn-primary:hover { background: var(--accent-hover); }
+  .btn-ghost { background: transparent; color: var(--ink); border-color: var(--border-strong); }
+  .btn-ghost:hover { background: var(--bg); }
+  .btn-danger { background: var(--danger-soft); color: var(--danger); }
+  .btn-danger:hover { background: var(--danger); color: white; }
+  .btn-danger-solid { background: var(--danger); color: white; border-color: var(--danger); }
+  .btn-danger-solid:hover { background: #7F1D1D; border-color: #7F1D1D; }
+  .btn-icon { padding: 8px; border-radius: 8px; cursor: pointer; color: var(--ink-soft); transition: all 0.15s; }
+  .btn-icon:hover { background: var(--bg); color: var(--ink); }
+  .btn-sm { padding: 6px 12px; font-size: 13px; }
+
+  /* Inputs */
+  .input, .select, .textarea {
+    width: 100%;
+    padding: 10px 13px;
+    border: 1px solid var(--border-strong);
+    border-radius: 9px;
+    background: var(--surface);
+    font-family: inherit;
+    font-size: 14px;
+    color: var(--ink);
+    transition: all 0.15s;
+  }
+  .input:focus, .select:focus, .textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+  .label { display: block; font-size: 12px; font-weight: 600; color: var(--ink-soft); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.04em; }
+
+  /* Badges */
+  .badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border-radius: 99px; font-size: 11px; font-weight: 600; letter-spacing: 0.02em; }
+  .badge-success { background: var(--success-soft); color: #166534; }
+  .badge-warning { background: var(--warning-soft); color: #854D0E; }
+  .badge-danger { background: var(--danger-soft); color: #991B1B; }
+  .badge-neutral { background: var(--bg); color: var(--ink-soft); border: 1px solid var(--border); }
+  .badge-accent { background: var(--accent-soft); color: #7F1D1D; }
+
+  /* Tables */
+  .table { width: 100%; border-collapse: collapse; }
+  .table th { text-align: left; padding: 10px 14px; font-size: 11px; font-weight: 600; color: var(--ink-muted); text-transform: uppercase; letter-spacing: 0.06em; border-bottom: 1px solid var(--border); background: #FBF9F5; }
+  .table td { padding: 14px; border-bottom: 1px solid var(--border); font-size: 14px; vertical-align: middle; }
+  .table tr:last-child td { border-bottom: 0; }
+  .table tr:hover td { background: #FCFAF6; }
+
+  /* Modal */
+  .modal-backdrop { position: fixed; inset: 0; background: rgba(22, 19, 14, 0.55); backdrop-filter: blur(4px); z-index: 50; display: flex; align-items: flex-start; justify-content: center; padding: 4vh 16px; overflow-y: auto; }
+  .modal { background: var(--surface); border-radius: 16px; width: 100%; max-width: 560px; max-height: 92vh; overflow-y: auto; box-shadow: 0 30px 60px -15px rgba(0,0,0,0.3); }
+  .modal-wide { max-width: 720px; }
+
+  /* Toast */
+  #toast-host { position: fixed; bottom: 20px; right: 20px; z-index: 100; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
+  .toast { background: var(--ink); color: white; padding: 12px 18px; border-radius: 10px; font-size: 14px; font-weight: 500; box-shadow: 0 10px 30px rgba(0,0,0,0.2); animation: toast-in 0.25s ease; display: flex; align-items: center; gap: 10px; }
+  @keyframes toast-in { from { transform: translateY(20px); opacity: 0; } }
+
+  /* Animations */
+  .fade-in { animation: fade-in 0.25s ease; }
+  @keyframes fade-in { from { opacity: 0; transform: translateY(4px); } }
+
+  /* KPI cards */
+  .kpi {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .kpi-label { font-size: 12px; font-weight: 600; color: var(--ink-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+  .kpi-value { font-family: 'Fraunces', serif; font-size: 38px; font-weight: 500; line-height: 1; margin-top: 8px; letter-spacing: -0.02em; }
+  .kpi-foot { font-size: 12px; color: var(--ink-soft); margin-top: 8px; }
+  .kpi-icon { position: absolute; top: 18px; right: 18px; color: var(--ink-muted); opacity: 0.6; }
+
+  /* Empty state */
+  .empty { padding: 60px 20px; text-align: center; color: var(--ink-soft); }
+  .empty-icon { display: inline-flex; padding: 16px; background: var(--bg); border-radius: 50%; color: var(--ink-muted); margin-bottom: 12px; }
+
+  /* Quick action chip */
+  .chip { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.15s; border: 1px solid var(--border-strong); background: var(--surface); color: var(--ink); }
+  .chip:hover { background: var(--bg); }
+  .chip-wa { background: #25D366; color: white; border-color: #25D366; }
+  .chip-wa:hover { background: #1FB958; }
+  .chip-sms { background: #007AFF; color: white; border-color: #007AFF; }
+  .chip-sms:hover { background: #0064D2; }
+  .chip-mail { background: var(--ink); color: white; border-color: var(--ink); }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 99px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--ink-muted); }
+
+  /* Mobile drawer */
+  @media (max-width: 1023px) {
+    #sidebar { position: fixed; inset: 0 auto 0 0; width: 260px; transform: translateX(-100%); transition: transform 0.25s; z-index: 40; display: flex !important; }
+    #sidebar.open { transform: translateX(0); }
+    #sidebar-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 35; display: none; }
+    #sidebar-backdrop.open { display: block; }
+  }
+
+  /* Print-friendly hide */
+  .no-print { /* placeholder */ }
+
+  /* Subtle accent line */
+  .accent-line { height: 3px; width: 36px; background: var(--accent); border-radius: 2px; }
+
+  /* Message previews */
+  .msg-preview-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--ink-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 10px 0 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .msg-preview {
+    border-radius: 12px;
+    padding: 12px 14px;
+    font-size: 14px;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .msg-preview-wa {
+    background: #DCF8C6;
+    border: 1px solid #C5E8AC;
+    border-bottom-left-radius: 4px;
+    max-width: 90%;
+    position: relative;
+  }
+  .msg-preview-wa::before {
+    content: '';
+    position: absolute;
+    left: -8px;
+    top: 0;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 0 10px 10px 0;
+    border-color: transparent #DCF8C6 transparent transparent;
+  }
+  .msg-preview-sms {
+    background: #E5E5EA;
+    border: 1px solid #D5D5DA;
+    border-bottom-left-radius: 4px;
+    max-width: 85%;
+    color: #000;
+  }
+  .msg-preview-email {
+    background: #FFFFFF;
+    border: 1px solid var(--border);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    font-family: -apple-system, Segoe UI, system-ui, sans-serif;
+  }
+  .msg-preview-empty {
+    color: var(--ink-muted);
+    font-style: italic;
+  }
+
+  /* Product images */
+  .prod-thumb {
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+    object-fit: cover;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: transform 0.15s;
+  }
+  .prod-thumb:hover { transform: scale(1.05); }
+  .prod-thumb-placeholder {
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ink-muted);
+  }
+  .image-drop {
+    border: 2px dashed var(--border-strong);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.15s;
+    background: var(--bg);
+  }
+  .image-drop:hover {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+  }
+  .image-drop.dragging {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+  }
+  .image-preview-big {
+    width: 100%;
+    max-height: 220px;
+    object-fit: contain;
+    background: var(--bg);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+  }
+  .image-viewer-backdrop {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 200;
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px;
+    cursor: zoom-out;
+  }
+  .image-viewer-backdrop img {
+    max-width: 95%;
+    max-height: 95vh;
+    border-radius: 12px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  }
+
+  /* ========== TICKET / PRINT ========== */
+  .ticket-doc {
+    background: white;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 40px 44px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    color: #111;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .ticket-doc h1, .ticket-doc h2, .ticket-doc h3 { font-family: 'Fraunces', serif; }
+  .ticket-doc .t-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; border-bottom: 2px solid #111; padding-bottom: 18px; margin-bottom: 24px; }
+  .ticket-doc .t-brand { display: flex; gap: 12px; align-items: center; }
+  .ticket-doc .t-initials { width: 52px; height: 52px; background: var(--accent); color: white; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-family: 'Fraunces', serif; font-size: 22px; font-weight: 600; }
+  .ticket-doc .t-workshop-name { font-family: 'Fraunces', serif; font-size: 24px; font-weight: 600; letter-spacing: -0.02em; }
+  .ticket-doc .t-workshop-meta { font-size: 11px; color: #555; margin-top: 2px; }
+  .ticket-doc .t-folio { text-align: right; }
+  .ticket-doc .t-folio-num { font-family: 'JetBrains Mono', monospace; font-size: 22px; font-weight: 600; }
+  .ticket-doc .t-folio-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: #666; }
+  .ticket-doc .t-blocks { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px; }
+  .ticket-doc .t-block-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: #666; margin-bottom: 4px; font-weight: 600; }
+  .ticket-doc .t-block-content { font-size: 13px; line-height: 1.5; }
+  .ticket-doc .t-block-content strong { font-size: 14px; }
+  .ticket-doc table.t-items { width: 100%; border-collapse: collapse; margin-bottom: 18px; }
+  .ticket-doc table.t-items th { text-align: left; padding: 8px 10px; background: #F5F5F5; font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; border-bottom: 1px solid #ccc; }
+  .ticket-doc table.t-items th.num, .ticket-doc table.t-items td.num { text-align: right; font-family: 'JetBrains Mono', monospace; }
+  .ticket-doc table.t-items td { padding: 10px; border-bottom: 1px solid #EEE; }
+  .ticket-doc .t-totals { margin-left: auto; width: 280px; }
+  .ticket-doc .t-totals .row { display: flex; justify-content: space-between; padding: 5px 0; font-size: 13px; }
+  .ticket-doc .t-totals .row.grand { border-top: 2px solid #111; margin-top: 6px; padding-top: 10px; font-size: 17px; font-family: 'Fraunces', serif; font-weight: 600; }
+  .ticket-doc .t-totals .num { font-family: 'JetBrains Mono', monospace; }
+  .ticket-doc .t-notes { margin-top: 22px; padding: 12px 14px; background: #FAFAFA; border-left: 3px solid var(--accent); font-size: 12px; }
+  .ticket-doc .t-signatures { margin-top: 50px; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+  .ticket-doc .t-sig { border-top: 1px solid #888; padding-top: 6px; text-align: center; font-size: 11px; color: #555; }
+  .ticket-doc .t-foot { margin-top: 30px; padding-top: 14px; border-top: 1px solid #EEE; text-align: center; font-size: 10px; color: #888; }
+  .ticket-status { display: inline-block; padding: 3px 9px; border-radius: 4px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; }
+  .ticket-status.pagado { background: #DCFCE7; color: #166534; }
+  .ticket-status.pendiente { background: #FEF3C7; color: #854D0E; }
+  .ticket-status.cancelado { background: #FECACA; color: #991B1B; text-decoration: line-through; }
+
+  @media print {
+    @page { size: A4; margin: 14mm; }
+    body { background: white !important; background-image: none !important; }
+    #sidebar, #sidebar-backdrop, header, #page-actions, .no-print, .ticket-actions, #toast-host, #modal-host { display: none !important; }
+    main { display: block !important; }
+    #view { padding: 0 !important; }
+    .ticket-doc { box-shadow: none; border: none; padding: 0; max-width: 100%; margin: 0; }
+    .ticket-doc .t-header { border-bottom-color: #000; }
+  }
+
+  /* ============================================================
+     BOTÓN Y ANIMACIÓN DE CERRAR SESIÓN
+  ============================================================ */
+  .logout-btn {
+    position: relative;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 8px;
+    padding: 11px 14px;
+    overflow: hidden;
+    border: 1px solid rgba(248, 113, 113, 0.28);
+    border-radius: 9px;
+    background: rgba(220, 38, 38, 0.08);
+    color: #FECACA;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+      transform 0.22s ease,
+      background 0.22s ease,
+      color 0.22s ease,
+      border-color 0.22s ease,
+      box-shadow 0.22s ease;
+  }
+
+  .logout-btn::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-110%);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.17),
+      transparent
+    );
+    transition: transform 0.55s ease;
+  }
+
+  .logout-btn:hover {
+    color: white;
+    background: var(--accent);
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 22px rgba(220, 38, 38, 0.25);
+  }
+
+  .logout-btn:hover::before {
+    transform: translateX(110%);
+  }
+
+  .logout-btn:active {
+    transform: scale(0.97);
+  }
+
+  .logout-icon,
+  .logout-btn span {
+    position: relative;
+    z-index: 1;
+  }
+
+  .logout-icon {
+    transition: transform 0.22s ease;
+  }
+
+  .logout-btn:hover .logout-icon {
+    transform: translateX(4px) rotate(-8deg);
+  }
+
+  .logout-btn.is-loading {
+    pointer-events: none;
+    opacity: 0.72;
+  }
+
+  .logout-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background:
+      radial-gradient(circle at top, rgba(220, 38, 38, 0.27), transparent 45%),
+      rgba(22, 19, 14, 0.97);
+    backdrop-filter: blur(12px);
+    animation: logout-overlay-in 0.35s ease both;
+  }
+
+  .logout-card {
+    width: min(420px, 100%);
+    padding: 38px 30px;
+    text-align: center;
+    background: white;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 22px;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4);
+    animation: logout-card-in 0.55s
+      cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .logout-symbol {
+    width: 72px;
+    height: 72px;
+    margin: 0 auto 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    background: var(--accent);
+    border-radius: 50%;
+    box-shadow: 0 12px 30px rgba(220, 38, 38, 0.35);
+  }
+
+  .logout-symbol svg {
+    animation: logout-icon-move 0.75s ease-in-out infinite alternate;
+  }
+
+  .logout-title {
+    margin-bottom: 7px;
+    font-family: "Fraunces", serif;
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .logout-description {
+    color: var(--ink-soft);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .logout-progress {
+    height: 5px;
+    margin-top: 24px;
+    overflow: hidden;
+    background: var(--accent-soft);
+    border-radius: 99px;
+  }
+
+  .logout-progress::after {
+    content: "";
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: var(--accent);
+    border-radius: inherit;
+    transform: translateX(-100%);
+    animation: logout-progress 1.1s ease forwards;
+  }
+
+  .logout-return-btn {
+    margin-top: 24px;
+    justify-content: center;
+  }
+
+  .app-logging-out {
+    pointer-events: none;
+    animation: app-logout 0.65s ease forwards;
+  }
+
+  @keyframes logout-overlay-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes logout-card-in {
+    from {
+      opacity: 0;
+      transform: translateY(30px) scale(0.92);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  @keyframes logout-icon-move {
+    from { transform: translateX(-3px); }
+    to { transform: translateX(5px); }
+  }
+
+  @keyframes logout-progress {
+    to { transform: translateX(0); }
+  }
+
+  @keyframes app-logout {
+    to {
+      opacity: 0;
+      transform: scale(0.97);
+      filter: blur(5px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .logout-btn,
+    .logout-icon,
+    .logout-overlay,
+    .logout-card,
+    .logout-symbol svg,
+    .logout-progress::after,
+    .app-logging-out {
+      animation: none !important;
+      transition: none !important;
+    }
+  }
+
 </style>
 </head>
 <body>
 
-<!-- ══════════ TOAST NOTIFICATION ══════════ -->
-<div class="toast" id="toast">
-  <span class="toast-icon" id="toastIcon">⬇️</span>
-  <span id="toastMsg">Descarga iniciada</span>
-</div>
+<div class="flex min-h-screen">
 
-<!-- ══════════ NAV ══════════ -->
-<nav>
-  <div class="nav-brand">⬡ Hitech Ingenium</div>
-  <div class="nav-links">
-    <a href="#features">Funcionalidades</a>
-    <a href="#modules">Módulos</a>
-    <a href="#requirements">Requisitos</a>
-    <a href="#install">Instalación</a>
-    <a href="#faq">FAQ</a>
-  </div>
-  <a href="#hero" class="nav-cta">Descargar ahora</a>
-</nav>
-
-<!-- ══════════ HERO ══════════ -->
-<section class="hero" id="hero">
-  <div class="hero-eyebrow"><span></span>SCADA Master Ecosystem v1.0</div>
-  <h1>
-    <span class="brand-name">SCADA Master</span><br>
-    para <span class="accent">Automatización Industrial</span>
-  </h1>
-  <p class="hero-sub">Plataforma de supervisión y control industrial en tiempo real para laboratorios universitarios de automatización. Disponible para Android y Windows.</p>
-  <div class="hero-version-badge">Versión estable 1.0.1 · Junio 2026 · Hitech Ingenium Labs</div>
-
-  <div class="hero-downloads">
-
-    <!-- ── TARJETA ANDROID ── -->
-    <div class="dl-card android">
-      <div class="dl-platform-icon">🤖</div>
-      <h3>Aplicación Móvil</h3>
-      <div class="dl-os">ANDROID 8.0+</div>
-      <ul class="dl-specs">
-        <li><span>Versión</span><span class="spec-val">1.0.1</span></li>
-        <li><span>Formato</span><span class="spec-val">.apk</span></li>
-        <li><span>Tamaño</span><span class="spec-val">~63 MB</span></li>
-        <li><span>API mínima</span><span class="spec-val">API 26</span></li>
-      </ul>
-      <a href="https://github.com/LEONEL01295/scada-master-releases/releases/download/v1.0.1/app-release.apk" class="btn-dl" id="btn-android" onclick="handleDownload('android')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-          <polyline points="7 10 12 15 17 10"/>
-          <line x1="12" y1="15" x2="12" y2="3"/>
-        </svg>
-        <span id="btn-android-label">Descargar APK</span>
-      </a>
-      <div class="dl-secondary-links" style="margin-top:8px">
-        <a href="#install" class="dl-link-sm">Guía de instalación</a>
-        <a href="#requirements" class="dl-link-sm">Requisitos</a>
+  <!-- Sidebar -->
+  <aside id="sidebar" class="sidebar w-[260px] hidden lg:flex flex-col p-5 shrink-0">
+    <div class="flex items-center gap-3 mb-8 px-2">
+      <div id="logo-initials" class="w-10 h-10 rounded-lg bg-[var(--accent)] flex items-center justify-center text-white font-display font-semibold text-lg leading-none tracking-tight">
+        TP
+      </div>
+      <div>
+        <div id="brand-title" class="font-display text-xl font-semibold text-white leading-none">Taller Pro</div>
+        <div class="text-[11px] uppercase tracking-widest text-[var(--ink-muted)] mt-1">Sistema de gestión</div>
       </div>
     </div>
 
-    <!-- ── TARJETA WINDOWS ── -->
-    <div class="dl-card windows">
-      <div class="dl-platform-icon">🪟</div>
-      <h3>Cliente de Escritorio</h3>
-      <div class="dl-os">WINDOWS 10 / 11 x64</div>
-      <ul class="dl-specs">
-        <li><span>Versión</span><span class="spec-val">1.0.1</span></li>
-        <li><span>Formato</span><span class="spec-val">.zip</span></li>
-        <li><span>Tamaño</span><span class="spec-val">~26 MB</span></li>
-        <li><span>Arquitectura</span><span class="spec-val">x64</span></li>
-      </ul>
-      <button class="btn-dl" id="btn-windows" onclick="handleDownload('windows')" disabled>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-          <polyline points="7 10 12 15 17 10"/>
-          <line x1="12" y1="15" x2="12" y2="3"/>
-        </svg>
-        <span id="btn-windows-label">Cargando...</span>
+    <nav class="space-y-1 flex-1" id="nav">
+      <!-- nav items injected -->
+    </nav>
+
+    <div class="pt-4 border-t border-[var(--sidebar-soft)] mt-4">
+      <div class="px-2 mb-3">
+        <div class="text-[11px] uppercase tracking-widest text-[var(--ink-muted)]">Taller</div>
+        <div id="workshop-name-display" class="text-sm font-semibold text-white mt-1">Mi Taller</div>
+      </div>
+      <div class="nav-item" onclick="navigate('config')">
+        <i data-lucide="settings" class="w-4 h-4"></i>
+        <span>Configuración</span>
+      </div>
+
+      <button
+        id="logout-btn"
+        type="button"
+        class="logout-btn"
+        onclick="cerrarSesion()"
+        aria-label="Cerrar sesión"
+      >
+        <i data-lucide="log-out" class="logout-icon w-4 h-4"></i>
+        <span>Cerrar sesión</span>
       </button>
-      <div class="dl-secondary-links" style="margin-top:8px">
-        <a href="#install" class="dl-link-sm">Guía de instalación</a>
-        <a href="#requirements" class="dl-link-sm">Requisitos</a>
+    </div>
+  </aside>
+  <div id="sidebar-backdrop" onclick="toggleSidebar(false)"></div>
+
+  <!-- Main -->
+  <main class="flex-1 min-w-0">
+    <!-- Topbar -->
+    <header class="sticky top-0 z-30 bg-[var(--bg)]/85 backdrop-blur border-b border-[var(--border)]">
+      <div class="flex items-center gap-3 px-5 lg:px-8 py-4">
+        <button class="btn-icon lg:hidden" onclick="toggleSidebar(true)">
+          <i data-lucide="menu" class="w-5 h-5"></i>
+        </button>
+        <div class="flex-1 min-w-0">
+          <div id="page-eyebrow" class="text-[11px] uppercase tracking-widest text-[var(--ink-muted)] font-semibold">Inicio</div>
+          <h1 id="page-title" class="font-display text-2xl lg:text-3xl font-semibold leading-tight">Dashboard</h1>
+        </div>
+        <div id="page-actions" class="flex items-center gap-2"></div>
+      </div>
+    </header>
+
+    <div id="view" class="p-5 lg:p-8 fade-in">
+      <!-- view content -->
+      <div class="empty">
+        <div class="empty-icon"><i data-lucide="loader" class="w-6 h-6 animate-spin"></i></div>
+        <div>Cargando datos…</div>
       </div>
     </div>
-
-  </div>
-
-  <div class="info-box" style="max-width:680px;margin:0 auto">
-    <div class="info-box-icon">🌐</div>
-    <div>
-      <strong>Requisito de Red:</strong> Para sincronizar datos en tiempo real, tu dispositivo debe estar conectado a la red interna del laboratorio. Se requiere el servidor broker MQTT activo.
-    </div>
-  </div>
-</section>
-
-<!-- ══════════ STATS ══════════ -->
-<div class="stats-row">
-  <div class="stat-cell"><span class="stat-num">5</span><span class="stat-label">Módulos industriales incluidos</span></div>
-  <div class="stat-cell"><span class="stat-num">2</span><span class="stat-label">Plataformas compatibles</span></div>
-  <div class="stat-cell"><span class="stat-num">RT</span><span class="stat-label">Monitoreo en tiempo real</span></div>
-  <div class="stat-cell"><span class="stat-num">MQTT</span><span class="stat-label">Protocolo de comunicación</span></div>
-  <div class="stat-cell"><span class="stat-num">v1.0</span><span class="stat-label">Versión estable actual</span></div>
+  </main>
 </div>
 
-<!-- ══════════ MODULES ══════════ -->
-<section class="section" id="modules" style="background:var(--surface)">
-  <div class="container">
-    <div class="section-label">Módulos</div>
-    <h2 class="section-title">5 estaciones industriales integradas</h2>
-    <p class="section-desc">Cada módulo replica una estación de manufactura real, con variables en vivo, alarmas y logs completos de operación.</p>
-    <div class="modules-grid">
-      <div class="module-card"><div class="module-icon" style="background:rgba(0,230,118,.08);color:var(--green)">💨</div><div><h4>SCADA Neumático</h4><p>Supervisión de presiones de línea, estado de actuadores lineales y rotatorios, apertura/cierre de electroválvulas y diagramas P&ID interactivos.</p><span class="module-tag">PRESIÓN · CAUDAL · ELECTROVÁLVULAS</span></div></div>
-      <div class="module-card"><div class="module-icon" style="background:rgba(41,121,255,.08);color:var(--blue)">🦾</div><div><h4>Brazo Robot 3 Ejes</h4><p>Visualización cartesiana en tiempo real de ejes X, Y, Z. Control cinemático coordinado, tracking de trayectorias y posición de home.</p><span class="module-tag">X · Y · Z · CINEMÁTICA</span></div></div>
-      <div class="module-card"><div class="module-icon" style="background:rgba(255,171,0,.08);color:#FFAB00">⚙️</div><div><h4>Estación de Maquinados</h4><p>Monitoreo de velocidad de husillo, temperatura de corte, desgaste de herramienta, conteo de piezas y tiempo de ciclo.</p><span class="module-tag">RPM · TEMP · CONTEO</span></div></div>
-      <div class="module-card"><div class="module-icon" style="background:rgba(255,82,82,.08);color:#FF5252">🔩</div><div><h4>Sistema de Prensado</h4><p>Registro de fuerza aplicada en kN, control de posición del émbolo hidráulico, validación dimensional y alertas de sobre-presión.</p><span class="module-tag">kN · HIDRÁULICA · QC</span></div></div>
-      <div class="module-card"><div class="module-icon" style="background:rgba(0,184,212,.08);color:var(--cyan)">📋</div><div><h4>Historial y Logs</h4><p>Auditoría completa de alarmas activas e históricas, fallas del sistema, exportación de reportes y filtros por módulo o severidad.</p><span class="module-tag">ALARMAS · EXPORTAR · AUDIT</span></div></div>
-      <div class="module-card" style="border-style:dashed;opacity:.6"><div class="module-icon" style="background:var(--surface3);color:var(--text3)">🔮</div><div><h4>Próximamente</h4><p>Nuevos módulos en desarrollo: Sistema de Visión Artificial, Banda Transportadora y Reportes analíticos avanzados.</p><span class="module-tag">EN DESARROLLO</span></div></div>
-    </div>
-  </div>
-</section>
+<div id="modal-host"></div>
+<div id="toast-host"></div>
 
-<!-- ══════════ FEATURES ══════════ -->
-<section class="section" id="features">
-  <div class="container">
-    <div class="feature-split">
-      <div>
-        <div class="section-label">Funcionalidades</div>
-        <h2 class="section-title">Diseñado para el laboratorio real</h2>
-        <p class="section-desc">SCADA Master conecta directamente con los PLCs y sensores del laboratorio, ofreciendo datos reales en milisegundos.</p>
-        <div class="feature-list">
-          <div class="feature-item"><div class="feature-icon">⚡</div><div><h4>Tiempo real con MQTT &amp; WebSockets</h4><p>Latencia sub-100 ms para variables críticas. Reconexión automática ante pérdida de señal.</p></div></div>
-          <div class="feature-item"><div class="feature-icon">📊</div><div><h4>Dashboards interactivos por módulo</h4><p>Gráficas de tendencia configurables, gauges animados y tableros P&ID con estado en vivo.</p></div></div>
-          <div class="feature-item"><div class="feature-icon">🔔</div><div><h4>Sistema de alarmas con prioridad</h4><p>Alarmas críticas, de advertencia e informativas con notificación push en móvil y sonido configurable.</p></div></div>
-          <div class="feature-item"><div class="feature-icon">📱</div><div><h4>UI adaptable a pantalla</h4><p>Mismo diseño funcional en teléfono Android de 5" y monitor de laboratorio de 27". Sin configuración adicional.</p></div></div>
-        </div>
-      </div>
-      <div>
-        <div class="app-mockup">
-          <div class="mockup-topbar">
-            <div class="mockup-dot" style="background:#FF5F57"></div>
-            <div class="mockup-dot" style="background:#FEBC2E"></div>
-            <div class="mockup-dot" style="background:#28C840"></div>
-            <span class="mockup-title">SCADA Master — Neumático</span>
-          </div>
-          <div class="mockup-body">
-            <div style="font-size:11px;color:var(--text3);font-family:'JetBrains Mono',monospace;margin-bottom:12px">LIVE · ACTUALIZADO HACE 0.3s</div>
-            <div class="mockup-gauge-row">
-              <div class="gauge-block"><div class="gauge-val">6.2</div><span class="gauge-unit">bar</span><div class="gauge-label">Presión línea</div></div>
-              <div class="gauge-block"><div class="gauge-val" style="color:var(--blue)">14.1</div><span class="gauge-unit">L/min</span><div class="gauge-label">Caudal</div></div>
-              <div class="gauge-block"><div class="gauge-val" style="color:var(--cyan)">38°</div><span class="gauge-unit">°C</span><div class="gauge-label">Temperatura</div></div>
-            </div>
-            <div style="font-size:12px;color:var(--text3);margin-bottom:8px">Presión últimos 30s</div>
-            <div class="mockup-chart-area">
-              <div class="bar" style="height:55%"></div><div class="bar" style="height:70%"></div><div class="bar" style="height:60%"></div><div class="bar" style="height:80%"></div><div class="bar" style="height:65%"></div><div class="bar" style="height:90%"></div><div class="bar" style="height:75%"></div><div class="bar" style="height:85%"></div><div class="bar" style="height:78%"></div><div class="bar" style="height:95%"></div>
-            </div>
-            <div class="mockup-alarm"><div class="alarm-dot"></div>SYS_OK · Todos los actuadores en estado nominal</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+<script>
+/* ============================================================
+   STORAGE LAYER
+   Usa localStorage. Si el navegador no lo permite (modo privado
+   con restricciones), cae a memoria — el sistema sigue
+   funcionando hasta cerrar la pestaña.
+============================================================ */
+const _memStore = {};
+let _storageMode = 'localStorage';
+try {
+  const _t = '__taller_test__';
+  localStorage.setItem(_t, '1');
+  localStorage.removeItem(_t);
+} catch {
+  _storageMode = 'memory';
+  console.warn('localStorage no disponible — usando memoria temporal.');
+}
 
-<!-- ══════════ REQUIREMENTS ══════════ -->
-<section class="section" id="requirements" style="background:var(--surface)">
-  <div class="container">
-    <div class="section-label">Compatibilidad</div>
-    <h2 class="section-title">Requisitos del sistema</h2>
-    <p class="section-desc">Verifica que tu dispositivo cumple los requisitos mínimos antes de instalar.</p>
-    <div class="req-panels">
-      <div class="req-panel"><div class="req-panel-header a-h"><span style="font-size:22px">🤖</span><div><span>Aplicación Android</span><span style="font-size:12px;color:var(--text3);font-weight:400">APK · Instalación directa</span></div></div><table class="req-table"><tr><td>Sistema operativo</td><td><span class="req-tag">Android 8.0</span> o superior</td></tr><tr><td>API Level mínimo</td><td><span class="req-tag">API 26</span></td></tr><tr><td>RAM recomendada</td><td>2 GB o más</td></tr><tr><td>Almacenamiento</td><td>~70 MB libres</td></tr><tr><td>Red</td><td>Wi-Fi (red laboratorio o internet)</td></tr><tr><td>Permisos</td><td>Red, Notificaciones</td></tr><tr><td>Fuentes desconocidas</td><td><span class="req-ok">⚠ Requiere activación manual</span></td></tr></table></div>
-      <div class="req-panel"><div class="req-panel-header w-h"><span style="font-size:22px">🪟</span><div><span>Cliente Windows</span><span style="font-size:12px;color:var(--text3);font-weight:400">ZIP · Carpeta portable</span></div></div><table class="req-table"><tr><td>Sistema operativo</td><td><span class="req-tag">Windows 10</span> <span class="req-tag">Windows 11</span></td></tr><tr><td>Arquitectura</td><td><span class="req-tag">x64</span> (64-bit)</td></tr><tr><td>RAM mínima</td><td>4 GB (8 GB recomendado)</td></tr><tr><td>Almacenamiento</td><td>~100 MB libres</td></tr><tr><td>Red</td><td>Ethernet o Wi-Fi (red laboratorio)</td></tr><tr><td>Resolución</td><td>1280×720 mínimo</td></tr><tr><td>SmartScreen</td><td><span class="req-ok">⚠ Requiere excepción manual</span></td></tr></table></div>
-    </div>
-  </div>
-</section>
-
-<!-- ══════════ TECH STACK ══════════ -->
-<section class="section">
-  <div class="container">
-    <div class="section-label">Tecnología</div>
-    <h2 class="section-title">Stack tecnológico</h2>
-    <p class="section-desc">Construido sobre tecnologías de automatización industrial estándar de la industria.</p>
-    <div class="tech-grid">
-      <div class="tech-item"><div class="tech-item-icon">📡</div><div><h5>MQTT Broker</h5><span>Comunicación pub/sub en tiempo real</span></div></div>
-      <div class="tech-item"><div class="tech-item-icon">🔌</div><div><h5>WebSockets</h5><span>Canal bidireccional persistente</span></div></div>
-      <div class="tech-item"><div class="tech-item-icon">🐦</div><div><h5>Flutter / Dart</h5><span>App Android y Windows con UI nativa</span></div></div>
-      <div class="tech-item"><div class="tech-item-icon">🔢</div><div><h5>Node.js Backend</h5><span>Servidor de datos y autenticación</span></div></div>
-      <div class="tech-item"><div class="tech-item-icon">🗃️</div><div><h5>SQLite / Firebase</h5><span>Almacenamiento local e historial cloud</span></div></div>
-      <div class="tech-item"><div class="tech-item-icon">🔒</div><div><h5>JWT Auth</h5><span>Autenticación segura con roles y permisos</span></div></div>
-    </div>
-  </div>
-</section>
-
-<!-- ══════════ INSTALL GUIDE ══════════ -->
-<section class="section" id="install" style="background:var(--surface)">
-  <div class="container">
-    <div class="section-label">Instalación</div>
-    <h2 class="section-title">Guía de instalación paso a paso</h2>
-    <p class="section-desc">Sigue estos pasos exactos para instalar SCADA Master en tu dispositivo.</p>
-    <div class="install-grid">
-      <div class="install-block android-block">
-        <div class="install-header android-h"><span style="font-size:24px">🤖</span><div><h4>Instalación en Android</h4><span>Archivo APK · Instalación directa</span></div><span class="install-os-badge android-badge" style="margin-left:auto">Android 8+</span></div>
-        <div class="install-steps">
-          <div class="step-row"><div class="step-num done">1</div><div class="step-content"><h5>Descargar el archivo APK</h5><p>Toca el botón <strong>Descargar APK</strong> en esta página. El archivo <code>SCADA-Master.apk</code> se descargará en tu carpeta de descargas.</p></div></div>
-          <div class="step-row"><div class="step-num done">2</div><div class="step-content"><h5>Confirmar descarga</h5><p>Si tu navegador muestra una advertencia de archivo potencialmente dañino, selecciona <strong>"Descargar de todas formas"</strong>. Esta advertencia es normal para APKs fuera de Play Store.</p></div></div>
-          <div class="step-row"><div class="step-num done">3</div><div class="step-content"><h5>Permitir fuentes desconocidas</h5><p>Al abrir el APK, ve a <strong>Ajustes → Aplicaciones → Permisos especiales → Instalar apps desconocidas</strong> y actívalo para tu navegador.</p><div class="step-warning">⚠ Este permiso aplica solo a tu navegador, no afecta la seguridad global del sistema.</div></div></div>
-          <div class="step-row"><div class="step-num">4</div><div class="step-content"><h5>Instalar y conectar</h5><p>Toca <strong>Instalar</strong> y espera unos segundos. Abre SCADA Master, conéctate al Wi-Fi del laboratorio y listo.</p></div></div>
-        </div>
-      </div>
-      <div class="install-block windows-block">
-        <div class="install-header windows-h"><span style="font-size:24px">🪟</span><div><h4>Instalación en Windows</h4><span>Archivo ZIP · Carpeta portable</span></div><span class="install-os-badge windows-badge" style="margin-left:auto">Win 10/11</span></div>
-        <div class="install-steps">
-          <div class="step-row"><div class="step-num done">1</div><div class="step-content"><h5>Descargar el archivo ZIP</h5><p>Haz clic en <strong>Descargar instalador (.zip)</strong>. El archivo <code>SCADA-Master-Windows.zip</code> se guardará en tu carpeta de descargas.</p></div></div>
-          <div class="step-row"><div class="step-num done">2</div><div class="step-content"><h5>Extraer el contenido</h5><p>Haz clic derecho sobre el archivo descargado y selecciona <strong>"Extraer todo..."</strong>. Elige una carpeta de destino (por ejemplo, Escritorio).</p></div></div>
-          <div class="step-row"><div class="step-num done">3</div><div class="step-content"><h5>Pasar SmartScreen (si aparece)</h5><p>Al ejecutar <code>analytics_dashboard.exe</code> dentro de la carpeta extraída, Windows Defender SmartScreen puede mostrar una advertencia. Haz clic en <strong>"Más información"</strong> y luego en <strong>"Ejecutar de todas formas"</strong>.</p><div class="step-warning">⚠ Este aviso aparece porque el ejecutable no tiene firma digital comercial, no porque sea peligroso.</div></div></div>
-          <div class="step-row"><div class="step-num">4</div><div class="step-content"><h5>Ejecutar la aplicación</h5><p>Dentro de la carpeta extraída, ejecuta <code>analytics_dashboard.exe</code>. No muevas ni borres los demás archivos/DLLs de la carpeta, son necesarios para que la app funcione.</p></div></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ══════════ FAQ ══════════ -->
-<section class="section" id="faq">
-  <div class="container">
-    <div class="section-label">Soporte</div>
-    <h2 class="section-title">Preguntas frecuentes</h2>
-    <p class="section-desc">Respuestas rápidas a los problemas más comunes.</p>
-    <div class="faq-list">
-      <div class="faq-item"><div class="faq-q" onclick="this.parentElement.classList.toggle('open')">¿Por qué Android muestra que el archivo puede ser dañino?<span>+</span></div><div class="faq-a">Los archivos APK descargados fuera de Google Play siempre muestran esta advertencia por políticas de seguridad de Android. El archivo APK de SCADA Master es desarrollado por Hitech Ingenium Labs exclusivamente para uso académico. Puedes seleccionar "Descargar de todas formas" con total seguridad.</div></div>
-      <div class="faq-item"><div class="faq-q" onclick="this.parentElement.classList.toggle('open')">¿Puedo usar SCADA Master sin conectarme a la red del laboratorio?<span>+</span></div><div class="faq-a">La aplicación requiere conectividad con el broker MQTT para recibir datos en tiempo real. Sin conexión a la red interna del laboratorio, la app mostrará los paneles pero sin datos en vivo. El historial local almacenado sí es accesible sin conexión.</div></div>
-      <div class="faq-item"><div class="faq-q" onclick="this.parentElement.classList.toggle('open')">¿Cuál es la dirección IP o URL del servidor MQTT?<span>+</span></div><div class="faq-a">La configuración del servidor MQTT (IP, puerto y credenciales) la proporciona el instructor del laboratorio. Consulta a tu profesor o al manual de práctica de tu laboratorio.</div></div>
-      <div class="faq-item"><div class="faq-q" onclick="this.parentElement.classList.toggle('open')">¿SCADA Master está disponible para iOS o macOS?<span>+</span></div><div class="faq-a">Actualmente SCADA Master está disponible únicamente para Android (APK) y Windows (x64). El desarrollo de versiones para iOS y macOS está en evaluación para futuras versiones del ecosistema.</div></div>
-      <div class="faq-item"><div class="faq-q" onclick="this.parentElement.classList.toggle('open')">¿La app consume muchos datos móviles?<span>+</span></div><div class="faq-a">SCADA Master está optimizado para redes locales de laboratorio. El protocolo MQTT es extremadamente ligero. En uso normal, el consumo es de aproximadamente 2–5 MB por hora. Se recomienda siempre usar la red Wi-Fi del campus para mayor estabilidad y menor latencia.</div></div>
-      <div class="faq-item"><div class="faq-q" onclick="this.parentElement.classList.toggle('open')">¿Cómo reporto un bug o solicito una funcionalidad?<span>+</span></div><div class="faq-a">Puedes reportar problemas o solicitudes directamente al equipo de Hitech Ingenium Labs a través del instructor del laboratorio. Incluye el módulo afectado, la versión de la app, tu sistema operativo y una descripción clara del problema.</div></div>
-    </div>
-  </div>
-</section>
-
-<!-- ══════════ FOOTER ══════════ -->
-<footer>
-  <div class="footer-brand">⬡ Hitech Ingenium Labs</div>
-  <p>SCADA Master Ecosystem · Versión 1.0.1 · Junio 2026</p>
-  <p style="margin-top:4px">Desarrollado para el Laboratorio de Automatización Industrial — Uso académico exclusivo</p>
-  <div class="footer-links">
-    <a href="#hero">Descargas</a><a href="#modules">Módulos</a>
-    <a href="#install">Instalación</a><a href="#faq">Soporte</a>
-  </div>
-  <p style="margin-top:24px;font-size:12px">© 2026 Hitech Ingenium Labs. Todos los derechos reservados.</p>
-</footer>
-
-<!-- ══════════════════════════════════════════════════════════════
-     🔥 FIREBASE INTEGRATION
-     ══════════════════════════════════════════════════════════════
-     Las descargas apuntan a la release v1.0.1 de GitHub:
-     https://github.com/LEONEL01295/scada-master-releases/releases/tag/v1.0.1
-     ══════════════════════════════════════════════════════════════ -->
-<script type="module">
-  import { initializeApp }         from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
-  import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
-
-
-  // ── 1. CONFIGURACIÓN DE FIREBASE ──────────────────────────
-  const firebaseConfig = {
-    apiKey:            "AIzaSyDSHJn_JiomBKbmvl0gDVXP2Fdj_uftFhA",
-    authDomain:        "maqueta-de-industrial.firebaseapp.com",
-    projectId:         "maqueta-de-industrial",
-    storageBucket:     "maqueta-de-industrial.firebasestorage.app",
-    messagingSenderId: "737546234830",
-    appId:             "1:737546234830:web:4dafe86ce13d60b6e4199f"
-  };
-
-  // ── 2. INICIALIZAR FIREBASE ───────────────────────────────────
-  const app     = initializeApp(firebaseConfig);
-  const db      = getFirestore(app);
-
-
-  // ── 3. LINKS DE DESCARGA DIRECTA (v1.0.1) ────────────────────
-  const downloadURLs = {
-    android: "https://github.com/LEONEL01295/scada-master-releases/releases/download/v1.0.1/app-release.apk",
-    windows: "https://github.com/LEONEL01295/scada-master-releases/releases/download/v1.0.1/SCADA-Master-Windows.zip"
-  };
-
-  // ── 4. ACTIVAR BOTONES DISPONIBLES ───────────────────────────
-  function loadDownloadURLs() {
-    for (const [platform, url] of Object.entries(downloadURLs)) {
-      const btn   = document.getElementById(`btn-${platform}`);
-      const label = document.getElementById(`btn-${platform}-label`);
-      if (url) {
-        btn.disabled      = false;
-        label.textContent = platform === 'android'
-          ? 'Descargar APK'
-          : 'Descargar instalador (.zip)';
-      } else {
-        btn.disabled      = true;
-        label.textContent = 'Próximamente';
-      }
+const Storage = {
+  get(key) {
+    try {
+      if (_storageMode === 'localStorage') return localStorage.getItem(key);
+      return _memStore[key] ?? null;
+    } catch { return _memStore[key] ?? null; }
+  },
+  set(key, value) {
+    try {
+      if (_storageMode === 'localStorage') localStorage.setItem(key, value);
+      _memStore[key] = value;
+      return { ok: true };
+    } catch (e) {
+      _memStore[key] = value;
+      console.warn('Storage error:', e);
+      const isQuota = e.name === 'QuotaExceededError' || e.code === 22 || /quota/i.test(e.message||'');
+      return { ok: false, error: isQuota ? 'quota' : 'unknown', message: e.message };
     }
   }
+};
 
-  // ── 5. MANEJAR DESCARGA ───────────────────────────────────
-  window.handleDownload = async function(platform) {
-    const url = downloadURLs[platform];
-    if (!url) return;
+function loadTable(name, def = []) {
+  const raw = Storage.get(name);
+  if (!raw) return def;
+  try { return JSON.parse(raw); } catch { return def; }
+}
+function saveTable(name, data) {
+  const r = Storage.set(name, JSON.stringify(data));
+  if (!r.ok && r.error === 'quota') {
+    toast('⚠ Almacenamiento lleno. Borra imágenes viejas o exporta respaldo.', 'alert-triangle');
+  }
+  return r.ok;
+}
 
-    // Registrar descarga detallada
-    await registrarDescarga(platform);
+/* ============================================================
+   IMAGE COMPRESSION
+   Reduces images to ~50KB max for safe localStorage usage
+============================================================ */
+function compressImage(file, maxSize = 500, quality = 0.72) {
+  return new Promise((resolve, reject) => {
+    if (!file || !file.type || !file.type.startsWith('image/')) {
+      reject(new Error('El archivo no es una imagen válida'));
+      return;
+    }
+    if (file.size > 15 * 1024 * 1024) {
+      reject(new Error('La imagen es demasiado grande (máx 15MB)'));
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        let { width, height } = img;
+        if (width > height && width > maxSize) {
+          height = Math.round((height / width) * maxSize);
+          width = maxSize;
+        } else if (height >= width && height > maxSize) {
+          width = Math.round((width / height) * maxSize);
+          height = maxSize;
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(0, 0, width, height);
+        ctx.drawImage(img, 0, 0, width, height);
+        try {
+          const dataUrl = canvas.toDataURL('image/jpeg', quality);
+          resolve(dataUrl);
+        } catch (err) {
+          reject(err);
+        }
+      };
+      img.onerror = () => reject(new Error('No se pudo cargar la imagen'));
+      img.src = e.target.result;
+    };
+    reader.onerror = () => reject(new Error('No se pudo leer el archivo'));
+    reader.readAsDataURL(file);
+  });
+}
 
-    // Mostrar toast
-    showToast(
-      platform === 'android' ? '⬇️' : '🪟',
-      platform === 'android'
-        ? 'Descargando APK desde GitHub Releases…'
-        : 'Descargando ZIP de Windows desde GitHub Releases…'
-    );
+function viewFullImage(src) {
+  const host = document.createElement('div');
+  host.className = 'image-viewer-backdrop';
+  host.onclick = () => host.remove();
+  host.innerHTML = `<img src="${src}" alt="Imagen del producto" onclick="event.stopPropagation()"/>`;
+  document.body.appendChild(host);
+}
 
-    // Iniciar descarga directa
-    const a = document.createElement('a');
-    a.href = url;
-    a.setAttribute('download', platform === 'android' ? 'SCADA-Master.apk' : 'SCADA-Master-Windows.zip');
-    a.setAttribute('target', '_blank');
-    a.setAttribute('rel', 'noopener noreferrer');
-    document.body.appendChild(a);
-    a.click();
-    setTimeout(() => document.body.removeChild(a), 200);
+/* ============================================================
+   STATE
+============================================================ */
+const state = {
+  clientes: [],
+  vehiculos: [],
+  servicios: [],
+  productos: [],
+  tickets: [],
+  config: {
+    workshop: 'Taller Elvira',
+    phone: '',
+    country: '52',
+    address: '',
+    rfc: '',
+    defaultMonths: 6,
+    defaultKm: 5000,
+    reminderDays: 30,
+    reminderKm: 500,
+    ivaPercent: 0,
+    nextFolio: 1,
+    folioPrefix: 'A',
+    templateWhatsapp: 'Hola {nombre} 👋\n\nTe saluda *{taller}*.\n\nTu {marca} {modelo} {anio} (placa {placa}) tiene programado servicio para el *{fecha}*.\n\nÚltimo servicio: {ultimo_servicio_tipo} el {ultimo_servicio_fecha}.\n\n¿Te agendamos? Solo responde este mensaje 🔧',
+    templateSms: 'Hola {nombre}, te saluda {taller}. Tu {marca} {modelo} ({placa}) tiene servicio programado para el {fecha}. ¿Te agendamos cita?',
+    templateEmail: 'Hola {nombre},\n\nTe escribimos desde {taller}.\n\nTu vehículo {marca} {modelo} {anio} (placa {placa}) tiene programado un servicio para el {fecha}.\n\nÚltimo servicio realizado: {ultimo_servicio_tipo} el {ultimo_servicio_fecha}.\n\nResponde este correo para confirmar tu cita.\n\nSaludos,\n{taller}'
+  },
+  view: 'dashboard',
+  search: ''
+};
+
+/* ============================================================
+   UTILS
+============================================================ */
+const uid = (p='') => p + Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+const _pad = n => String(n).padStart(2, '0');
+const _toISO = d => d.getFullYear() + '-' + _pad(d.getMonth()+1) + '-' + _pad(d.getDate());
+const today = () => _toISO(new Date());
+const escapeHtml = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmtMoney = n => '$' + Number(n||0).toLocaleString('es-MX', {minimumFractionDigits:2, maximumFractionDigits:2});
+const fmtKm = n => Number(n||0).toLocaleString('es-MX') + ' km';
+function fmtDate(iso) {
+  if (!iso) return '—';
+  const [y,m,d] = iso.split('-').map(Number);
+  if (!y || !m || !d) return '—';
+  const dt = new Date(y, m-1, d);
+  return dt.toLocaleDateString('es-MX', { day:'2-digit', month:'short', year:'numeric' });
+}
+function addMonths(iso, months) {
+  if (!iso) return '';
+  const [y,m,d] = iso.split('-').map(Number);
+  const dt = new Date(y, m-1, d);
+  dt.setMonth(dt.getMonth() + Number(months||0));
+  return _toISO(dt);
+}
+function daysBetween(iso) {
+  if (!iso) return null;
+  const [y,m,d] = iso.split('-').map(Number);
+  if (!y || !m || !d) return null;
+  const target = new Date(y, m-1, d); target.setHours(0,0,0,0);
+  const t = new Date(); t.setHours(0,0,0,0);
+  return Math.round((target - t) / 86400000);
+}
+function reminderStatus(diasParaServicio) {
+  if (diasParaServicio == null) return null;
+  if (diasParaServicio < 0) return { type:'overdue', label:`Vencido hace ${-diasParaServicio}d`, badge:'badge-danger' };
+  if (diasParaServicio === 0) return { type:'today', label:'Hoy', badge:'badge-danger' };
+  if (diasParaServicio <= state.config.reminderDays) return { type:'soon', label:`En ${diasParaServicio} días`, badge:'badge-warning' };
+  return { type:'ok', label:`En ${diasParaServicio} días`, badge:'badge-success' };
+}
+function toast(msg, icon='check-circle') {
+  const host = document.getElementById('toast-host');
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.innerHTML = `<i data-lucide="${icon}" class="w-4 h-4"></i><span>${escapeHtml(msg)}</span>`;
+  host.appendChild(el);
+  lucide.createIcons();
+  setTimeout(() => { el.style.opacity = '0'; el.style.transform = 'translateY(8px)'; el.style.transition='all 0.2s'; }, 2400);
+  setTimeout(() => el.remove(), 2700);
+}
+function confirm2(message, opts = {}) {
+  return new Promise(resolve => {
+    const o = {
+      description: opts.description || '',
+      confirmText: opts.confirmText || 'Eliminar',
+      cancelText: opts.cancelText || 'Cancelar',
+      danger: opts.danger !== false,
+      icon: opts.icon || 'alert-triangle'
+    };
+    const host = document.createElement('div');
+    host.className = 'modal-backdrop';
+    host.style.zIndex = '60';
+    host.innerHTML = `
+      <div class="modal fade-in" style="max-width: 440px; margin-top: 15vh;">
+        <div class="p-6">
+          <div class="flex gap-4 items-start">
+            <div class="rounded-full ${o.danger ? 'bg-[var(--danger-soft)]' : 'bg-[var(--accent-soft)]'} flex items-center justify-center shrink-0" style="width:48px;height:48px">
+              <i data-lucide="${o.icon}" style="color: ${o.danger ? 'var(--danger)' : 'var(--accent)'}; width:22px; height:22px"></i>
+            </div>
+            <div class="flex-1 min-w-0 pt-1">
+              <div class="font-display text-xl font-semibold leading-tight">${escapeHtml(message)}</div>
+              ${o.description ? `<div class="text-sm text-[var(--ink-soft)] mt-2 leading-relaxed">${escapeHtml(o.description)}</div>` : ''}
+            </div>
+          </div>
+          <div class="flex justify-end gap-2 mt-6">
+            <button type="button" class="btn btn-ghost" data-act="cancel">${escapeHtml(o.cancelText)}</button>
+            <button type="button" class="btn ${o.danger ? 'btn-danger-solid' : 'btn-primary'}" data-act="ok">${escapeHtml(o.confirmText)}</button>
+          </div>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(host);
+    lucide.createIcons();
+    const done = (val) => {
+      document.removeEventListener('keydown', keyHandler, true);
+      host.style.opacity = '0';
+      host.style.transition = 'opacity 0.15s';
+      setTimeout(() => host.remove(), 150);
+      resolve(val);
+    };
+    const keyHandler = (e) => {
+      if (e.key === 'Escape') { e.stopImmediatePropagation(); e.preventDefault(); done(false); }
+      else if (e.key === 'Enter') { e.preventDefault(); done(true); }
+    };
+    host.querySelector('[data-act="cancel"]').onclick = () => done(false);
+    host.querySelector('[data-act="ok"]').onclick = () => done(true);
+    host.onclick = (e) => { if (e.target === host) done(false); };
+    document.addEventListener('keydown', keyHandler, true);
+    setTimeout(() => host.querySelector('[data-act="ok"]').focus(), 60);
+  });
+}
+
+function alert2(message, opts = {}) {
+  return new Promise(resolve => {
+    const o = {
+      description: opts.description || '',
+      okText: opts.okText || 'Entendido',
+      icon: opts.icon || 'info',
+      danger: opts.danger || false
+    };
+    const host = document.createElement('div');
+    host.className = 'modal-backdrop';
+    host.style.zIndex = '60';
+    host.innerHTML = `
+      <div class="modal fade-in" style="max-width: 440px; margin-top: 15vh;">
+        <div class="p-6">
+          <div class="flex gap-4 items-start">
+            <div class="rounded-full ${o.danger ? 'bg-[var(--danger-soft)]' : 'bg-[var(--accent-soft)]'} flex items-center justify-center shrink-0" style="width:48px;height:48px">
+              <i data-lucide="${o.icon}" style="color: ${o.danger ? 'var(--danger)' : 'var(--accent)'}; width:22px; height:22px"></i>
+            </div>
+            <div class="flex-1 min-w-0 pt-1">
+              <div class="font-display text-xl font-semibold leading-tight">${escapeHtml(message)}</div>
+              ${o.description ? `<div class="text-sm text-[var(--ink-soft)] mt-2 leading-relaxed">${escapeHtml(o.description)}</div>` : ''}
+            </div>
+          </div>
+          <div class="flex justify-end mt-6">
+            <button type="button" class="btn btn-primary" data-act="ok">${escapeHtml(o.okText)}</button>
+          </div>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(host);
+    lucide.createIcons();
+    const done = () => {
+      document.removeEventListener('keydown', keyHandler, true);
+      host.style.opacity = '0';
+      host.style.transition = 'opacity 0.15s';
+      setTimeout(() => host.remove(), 150);
+      resolve();
+    };
+    const keyHandler = (e) => {
+      if (e.key === 'Escape' || e.key === 'Enter') { e.stopImmediatePropagation(); e.preventDefault(); done(); }
+    };
+    host.querySelector('[data-act="ok"]').onclick = done;
+    host.onclick = (e) => { if (e.target === host) done(); };
+    document.addEventListener('keydown', keyHandler, true);
+    setTimeout(() => host.querySelector('[data-act="ok"]').focus(), 60);
+  });
+}
+
+function getInitials(name) {
+  return (name || 'Taller Pro')
+    .split(/\s+/).filter(Boolean).slice(0, 2)
+    .map(w => w[0]).join('').toUpperCase() || 'T';
+}
+
+function clienteById(id) { return state.clientes.find(c => c.id === id); }
+function vehiculoById(id) { return state.vehiculos.find(v => v.id === id); }
+function vehiculosByCliente(id) { return state.vehiculos.filter(v => !v.deletedAt && v.clienteId === id); }
+function serviciosByVehiculo(id) { return state.servicios.filter(s => !s.deletedAt && s.vehiculoId === id).sort((a,b)=>b.fecha.localeCompare(a.fecha)); }
+function ultimoServicio(vehId) { return serviciosByVehiculo(vehId)[0]; }
+
+/* ============================================================
+   SEED DATA
+============================================================ */
+async function seedIfEmpty() {
+  const seeded = await Storage.get('_seeded');
+  if (seeded) return;
+
+  const c1 = uid('c_'), c2 = uid('c_'), c3 = uid('c_'), c4 = uid('c_');
+  state.clientes = [
+    { id: c1, nombre: 'María González', telefono: '5512345678', email: 'maria@example.com', notas: 'Cliente desde 2022', createdAt: today() },
+    { id: c2, nombre: 'Carlos Rodríguez', telefono: '5598765432', email: 'carlos.r@example.com', notas: '', createdAt: today() },
+    { id: c3, nombre: 'Ana Martínez', telefono: '5544332211', email: 'ana.m@example.com', notas: 'Prefiere WhatsApp', createdAt: today() },
+    { id: c4, nombre: 'Luis Hernández', telefono: '5577889900', email: '', notas: '', createdAt: today() }
+  ];
+
+  const v1 = uid('v_'), v2 = uid('v_'), v3 = uid('v_'), v4 = uid('v_'), v5 = uid('v_');
+  state.vehiculos = [
+    { id: v1, clienteId: c1, marca: 'Toyota', modelo: 'Corolla', anio: 2019, placa: 'ABC-123', color: 'Blanco', kmActual: 78500, notas: '' },
+    { id: v2, clienteId: c2, marca: 'Nissan', modelo: 'Sentra', anio: 2021, placa: 'XYZ-789', color: 'Gris', kmActual: 42300, notas: 'Garantía vigente' },
+    { id: v3, clienteId: c3, marca: 'Honda', modelo: 'Civic', anio: 2018, placa: 'JKL-456', color: 'Negro', kmActual: 95200, notas: '' },
+    { id: v4, clienteId: c1, marca: 'Ford', modelo: 'Ranger', anio: 2020, placa: 'TRK-001', color: 'Azul', kmActual: 56000, notas: 'Uso de trabajo' },
+    { id: v5, clienteId: c4, marca: 'Chevrolet', modelo: 'Aveo', anio: 2017, placa: 'AVE-222', color: 'Rojo', kmActual: 110400, notas: '' }
+  ];
+
+  const hoy = today();
+  const past = (months) => { const d = new Date(); d.setMonth(d.getMonth()-months); return d.toISOString().slice(0,10); };
+
+  state.servicios = [
+    { id: uid('s_'), vehiculoId: v1, tipo: 'Cambio de aceite y filtro', descripcion: 'Aceite sintético 5W30', fecha: past(7), km: 73500, costo: 850, proxFecha: addMonths(past(7), 6), proxKm: 78500 },
+    { id: uid('s_'), vehiculoId: v2, tipo: 'Servicio mayor', descripcion: 'Frenos, aceite, filtros', fecha: past(11), km: 38000, costo: 4200, proxFecha: addMonths(past(11), 6), proxKm: 43000 },
+    { id: uid('s_'), vehiculoId: v3, tipo: 'Afinación', descripcion: 'Bujías y filtro de aire', fecha: past(3), km: 92000, costo: 1800, proxFecha: addMonths(past(3), 12), proxKm: 102000 },
+    { id: uid('s_'), vehiculoId: v4, tipo: 'Cambio de aceite', descripcion: 'Aceite mineral 25W60', fecha: past(5), km: 51200, costo: 950, proxFecha: addMonths(past(5), 6), proxKm: 56200 },
+    { id: uid('s_'), vehiculoId: v5, tipo: 'Revisión general', descripcion: 'Diagnóstico completo', fecha: past(13), km: 105000, costo: 600, proxFecha: addMonths(past(13), 6), proxKm: 110000 }
+  ];
+
+  state.productos = [
+    { id: uid('p_'), nombre: 'Aceite sintético 5W30 - 1L', sku: 'ACE-5W30', categoria: 'Lubricantes', stock: 24, stockMin: 10, precio: 280, proveedor: 'Mobil' },
+    { id: uid('p_'), nombre: 'Aceite mineral 25W60 - 1L', sku: 'ACE-25W60', categoria: 'Lubricantes', stock: 6, stockMin: 8, precio: 180, proveedor: 'Bardahl' },
+    { id: uid('p_'), nombre: 'Filtro de aceite Toyota', sku: 'FIL-TOY-01', categoria: 'Filtros', stock: 12, stockMin: 5, precio: 120, proveedor: 'Toyota OEM' },
+    { id: uid('p_'), nombre: 'Filtro de aire universal', sku: 'FIL-AIR-U1', categoria: 'Filtros', stock: 3, stockMin: 5, precio: 200, proveedor: 'Bosch' },
+    { id: uid('p_'), nombre: 'Bujía NGK Iridium', sku: 'BUJ-NGK-IR', categoria: 'Encendido', stock: 28, stockMin: 12, precio: 220, proveedor: 'NGK' },
+    { id: uid('p_'), nombre: 'Pastillas de freno cerámicas', sku: 'FRE-CER-01', categoria: 'Frenos', stock: 9, stockMin: 4, precio: 850, proveedor: 'Brembo' },
+    { id: uid('p_'), nombre: 'Líquido de frenos DOT4', sku: 'LIQ-DOT4', categoria: 'Líquidos', stock: 15, stockMin: 6, precio: 95, proveedor: 'Bosch' },
+    { id: uid('p_'), nombre: 'Anticongelante verde 1L', sku: 'ANT-VER-1L', categoria: 'Líquidos', stock: 2, stockMin: 5, precio: 110, proveedor: 'Prestone' }
+  ];
+
+  await persistAll();
+  await Storage.set('_seeded', '1');
+}
+
+async function persistAll() {
+  await saveTable('clientes', state.clientes);
+  await saveTable('vehiculos', state.vehiculos);
+  await saveTable('servicios', state.servicios);
+  await saveTable('productos', state.productos);
+  await saveTable('tickets', state.tickets);
+  await saveTable('config', state.config);
+}
+
+/* ============================================================
+   NAVIGATION
+============================================================ */
+const NAV = [
+  { key: 'dashboard', label: 'Dashboard', icon: 'layout-dashboard' },
+  { key: 'recordatorios', label: 'Recordatorios', icon: 'bell-ring', badge: () => contarPendientes() },
+  { key: 'clientes', label: 'Clientes', icon: 'users' },
+  { key: 'vehiculos', label: 'Vehículos', icon: 'car' },
+  { key: 'servicios', label: 'Servicios', icon: 'wrench' },
+  { key: 'tickets', label: 'Tickets', icon: 'receipt' },
+  { key: 'inventario', label: 'Inventario', icon: 'package', badge: () => contarStockBajo() }
+];
+
+function renderNav() {
+  const nav = document.getElementById('nav');
+  nav.innerHTML = NAV.map(n => {
+    const b = n.badge ? n.badge() : 0;
+    return `
+      <div class="nav-item ${state.view === n.key ? 'active' : ''}" onclick="navigate('${n.key}')">
+        <i data-lucide="${n.icon}" class="w-4 h-4"></i>
+        <span>${n.label}</span>
+        ${b > 0 ? `<span class="nav-badge">${b}</span>` : ''}
+      </div>
+    `;
+  }).join('');
+  document.getElementById('workshop-name-display').textContent = state.config.workshop || 'Taller Elvira';
+  document.getElementById('brand-title').textContent = state.config.workshop || 'Taller Elvira';
+  document.getElementById('logo-initials').textContent = getInitials(state.config.workshop);
+  document.title = (state.config.workshop || 'Taller Elvira') + ' — Taller Elvira';
+  lucide.createIcons();
+}
+
+function navigate(view) {
+  state.view = view;
+  state.search = '';
+  state.view_ticket_id = null;
+  state.subview = 'active';
+  toggleSidebar(false);
+  render();
+}
+
+function toggleSubview() {
+  state.subview = state.subview === 'trash' ? 'active' : 'trash';
+  state.search = '';
+  render();
+}
+
+/* ============================================================
+   GENERIC SOFT-DELETE / RESTORE / TRASH HELPERS
+============================================================ */
+async function softDeleteEntity(table, id) {
+  const arr = state[table];
+  const idx = arr.findIndex(x => x.id === id);
+  if (idx < 0) return false;
+  arr[idx] = { ...arr[idx], deletedAt: new Date().toISOString() };
+  await saveTable(table, arr);
+  return true;
+}
+
+async function restoreEntity(table, id) {
+  const arr = state[table];
+  const idx = arr.findIndex(x => x.id === id);
+  if (idx < 0) return false;
+  const { deletedAt, ...rest } = arr[idx];
+  arr[idx] = rest;
+  await saveTable(table, arr);
+  return true;
+}
+
+async function permanentDeleteEntity(table, id) {
+  state[table] = state[table].filter(x => x.id !== id);
+  await saveTable(table, state[table]);
+}
+
+const TRASH_LABELS = {
+  clientes: { sing: 'cliente', plur: 'clientes' },
+  vehiculos: { sing: 'vehículo', plur: 'vehículos' },
+  servicios: { sing: 'servicio', plur: 'servicios' },
+  tickets: { sing: 'ticket', plur: 'tickets' },
+  productos: { sing: 'producto', plur: 'productos' }
+};
+
+async function emptyTrashFor(table) {
+  const trashed = state[table].filter(x => x.deletedAt);
+  if (trashed.length === 0) return;
+  const lbl = TRASH_LABELS[table];
+  const ok = await confirm2('¿Vaciar la papelera?', {
+    description: `Se eliminarán permanentemente ${trashed.length} ${trashed.length === 1 ? lbl.sing : lbl.plur} de la papelera. Esta acción NO se puede deshacer.`,
+    confirmText: 'Vaciar papelera'
+  });
+  if (!ok) return;
+  state[table] = state[table].filter(x => !x.deletedAt);
+  await saveTable(table, state[table]);
+  toast('Papelera vaciada', 'trash-2');
+  render();
+}
+
+function trashActionsHTML(table, label, addBtnHTML = '') {
+  const trashed = state[table].filter(x => x.deletedAt);
+  if (state.subview === 'trash') {
+    return `
+      <button class="btn btn-ghost btn-sm" onclick="toggleSubview()"><i data-lucide="arrow-left" class="w-4 h-4"></i>Volver</button>
+      ${trashed.length > 0 ? `<button class="btn btn-danger-solid btn-sm" onclick="emptyTrashFor('${table}')"><i data-lucide="trash-2" class="w-4 h-4"></i>Vaciar papelera</button>` : ''}
+    `;
+  }
+  return `
+    <button class="btn btn-ghost btn-sm" onclick="toggleSubview()" title="Papelera"><i data-lucide="trash-2" class="w-4 h-4"></i>Papelera${trashed.length > 0 ? ' (' + trashed.length + ')' : ''}</button>
+    ${addBtnHTML}
+  `;
+}
+
+function trashHelpHTML(label) {
+  return `
+    <div class="mb-5 p-4 bg-[var(--accent-soft)] rounded-xl flex items-start gap-3" style="border:1px solid #FCA5A5">
+      <i data-lucide="info" class="w-5 h-5 shrink-0 mt-0.5" style="color:var(--accent)"></i>
+      <div class="text-sm" style="color:#7F1D1D">
+        <strong>Papelera de ${label}.</strong> Aquí están los ${label} que eliminaste. Puedes <strong>restaurarlos</strong> o <strong>eliminarlos para siempre</strong>.
+      </div>
+    </div>
+  `;
+}
+
+function diasEnPapeleraLabel(deletedAt) {
+  if (!deletedAt) return '—';
+  const d = daysBetween(deletedAt.slice(0,10));
+  if (d === 0) return 'Hoy';
+  if (d === -1) return 'Ayer';
+  return `Hace ${-d} días`;
+}
+
+function toggleSidebar(open) {
+  const sb = document.getElementById('sidebar');
+  const bd = document.getElementById('sidebar-backdrop');
+  if (open === undefined) open = !sb.classList.contains('open');
+  sb.classList.toggle('open', open);
+  bd.classList.toggle('open', open);
+}
+
+/* ============================================================
+   COUNTERS
+============================================================ */
+function contarPendientes() {
+  return state.vehiculos.filter(v => {
+    if (v.deletedAt) return false;
+    const ult = ultimoServicio(v.id);
+    if (!ult || !ult.proxFecha) return false;
+    const d = daysBetween(ult.proxFecha);
+    return d !== null && d <= state.config.reminderDays;
+  }).length;
+}
+function contarStockBajo() {
+  return state.productos.filter(p => !p.deletedAt && p.stock <= p.stockMin).length;
+}
+
+/* ============================================================
+   RENDER ROUTER
+============================================================ */
+function render() {
+  renderNav();
+  const view = document.getElementById('view');
+  view.classList.remove('fade-in');
+  void view.offsetWidth;
+  view.classList.add('fade-in');
+
+  const actions = document.getElementById('page-actions');
+  actions.innerHTML = '';
+
+  switch (state.view) {
+    case 'dashboard': setHeader('Inicio', 'Dashboard'); renderDashboard(view); break;
+    case 'recordatorios': setHeader('Comunicación', 'Recordatorios de servicio'); renderRecordatorios(view); break;
+    case 'clientes': setHeader('Personas', 'Clientes'); renderClientes(view); break;
+    case 'vehiculos': setHeader('Personas', 'Vehículos'); renderVehiculos(view); break;
+    case 'servicios': setHeader('Operación', 'Servicios realizados'); renderServicios(view); break;
+    case 'tickets': setHeader('Operación', 'Tickets / Órdenes de trabajo'); renderTickets(view); break;
+    case 'inventario': setHeader('Almacén', 'Inventario'); renderInventario(view); break;
+    case 'config': setHeader('Sistema', 'Configuración'); renderConfig(view); setTimeout(updateTemplatePreviews, 50); break;
+    default: view.innerHTML = '<div class="empty">Vista no encontrada</div>';
+  }
+  lucide.createIcons();
+}
+
+function setHeader(eyebrow, title) {
+  document.getElementById('page-eyebrow').textContent = eyebrow;
+  document.getElementById('page-title').textContent = title;
+}
+
+function setActions(html) {
+  document.getElementById('page-actions').innerHTML = html;
+  lucide.createIcons();
+}
+
+/* ============================================================
+   VIEW: DASHBOARD
+============================================================ */
+function renderDashboard(host) {
+  const totalClientes = state.clientes.filter(c => !c.deletedAt).length;
+  const totalVehiculos = state.vehiculos.filter(v => !v.deletedAt).length;
+  const pendientes = contarPendientes();
+  const stockBajo = contarStockBajo();
+  const ingresosMes = state.servicios
+    .filter(s => !s.deletedAt && s.fecha && s.fecha.slice(0,7) === today().slice(0,7))
+    .reduce((a, s) => a + Number(s.costo||0), 0);
+  const valorInventario = state.productos.filter(p => !p.deletedAt).reduce((a,p)=>a + p.stock * p.precio, 0);
+
+  const proximos = state.vehiculos
+    .filter(v => !v.deletedAt)
+    .map(v => {
+      const ult = ultimoServicio(v.id);
+      if (!ult || !ult.proxFecha) return null;
+      const d = daysBetween(ult.proxFecha);
+      if (d === null || d > state.config.reminderDays) return null;
+      return { vehiculo: v, ultimo: ult, dias: d };
+    })
+    .filter(Boolean)
+    .sort((a,b) => a.dias - b.dias)
+    .slice(0, 5);
+
+  host.innerHTML = `
+    <div class="mb-6">
+      <div class="accent-line mb-3"></div>
+      <p class="font-display serif-italic text-xl text-[var(--ink-soft)]">Buen día. Esto es lo que está pasando en <span class="text-[var(--ink)]">${escapeHtml(state.config.workshop)}</span>.</p>
+    </div>
+
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div class="kpi">
+        <div class="kpi-icon"><i data-lucide="users" class="w-5 h-5"></i></div>
+        <div class="kpi-label">Clientes</div>
+        <div class="kpi-value">${totalClientes}</div>
+        <div class="kpi-foot">Registrados en total</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-icon"><i data-lucide="car" class="w-5 h-5"></i></div>
+        <div class="kpi-label">Vehículos</div>
+        <div class="kpi-value">${totalVehiculos}</div>
+        <div class="kpi-foot">En seguimiento</div>
+      </div>
+      <div class="kpi" style="background: linear-gradient(135deg, #FEE2E2 0%, #FFFFFF 80%); border-color: #FECACA;">
+        <div class="kpi-icon" style="color:#7F1D1D"><i data-lucide="bell-ring" class="w-5 h-5"></i></div>
+        <div class="kpi-label" style="color:#7F1D1D">Recordatorios</div>
+        <div class="kpi-value" style="color:#7F1D1D">${pendientes}</div>
+        <div class="kpi-foot" style="color:#7F1D1D">Por contactar pronto</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-icon"><i data-lucide="alert-triangle" class="w-5 h-5"></i></div>
+        <div class="kpi-label">Stock bajo</div>
+        <div class="kpi-value">${stockBajo}</div>
+        <div class="kpi-foot">Productos a reabastecer</div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
+      <div class="card card-pad">
+        <div class="kpi-label">Ingresos este mes</div>
+        <div class="kpi-value">${fmtMoney(ingresosMes)}</div>
+        <div class="kpi-foot">Suma de servicios facturados</div>
+      </div>
+      <div class="card card-pad">
+        <div class="kpi-label">Valor del inventario</div>
+        <div class="kpi-value">${fmtMoney(valorInventario)}</div>
+        <div class="kpi-foot">${state.productos.filter(p=>!p.deletedAt).length} productos en almacén</div>
+      </div>
+      <div class="card card-pad">
+        <div class="kpi-label">Servicios este mes</div>
+        <div class="kpi-value">${state.servicios.filter(s=>!s.deletedAt && s.fecha?.slice(0,7)===today().slice(0,7)).length}</div>
+        <div class="kpi-foot">Registrados en ${new Date().toLocaleDateString('es-MX',{month:'long'})}</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="flex items-center justify-between p-5 border-b border-[var(--border)]">
+        <div>
+          <div class="font-display text-xl font-semibold">Próximos servicios</div>
+          <div class="text-sm text-[var(--ink-soft)] mt-1">Clientes que deberías contactar pronto</div>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="navigate('recordatorios')">Ver todos <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+      </div>
+      ${proximos.length === 0 ? `
+        <div class="empty">
+          <div class="empty-icon"><i data-lucide="check-circle-2" class="w-6 h-6"></i></div>
+          <div class="font-medium text-[var(--ink)]">Todo al corriente</div>
+          <div class="text-sm mt-1">No hay servicios pendientes en los próximos ${state.config.reminderDays} días.</div>
+        </div>
+      ` : `
+        <div class="divide-y divide-[var(--border)]">
+          ${proximos.map(p => {
+            const cli = clienteById(p.vehiculo.clienteId);
+            const st = reminderStatus(p.dias);
+            return `
+              <div class="flex items-center gap-4 p-5">
+                <div class="w-10 h-10 rounded-lg bg-[var(--accent-soft)] flex items-center justify-center shrink-0">
+                  <i data-lucide="car" class="w-5 h-5 text-[var(--accent)]"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="font-semibold truncate">${escapeHtml(cli?.nombre || 'Cliente')}</div>
+                  <div class="text-sm text-[var(--ink-soft)] truncate">${escapeHtml(p.vehiculo.marca)} ${escapeHtml(p.vehiculo.modelo)} ${p.vehiculo.anio} · <span class="font-mono">${escapeHtml(p.vehiculo.placa)}</span></div>
+                </div>
+                <div class="text-right shrink-0">
+                  <div class="badge ${st.badge}">${st.label}</div>
+                  <div class="text-xs text-[var(--ink-muted)] mt-1">${fmtDate(p.ultimo.proxFecha)}</div>
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      `}
+    </div>
+  `;
+}
+
+/* ============================================================
+   VIEW: RECORDATORIOS
+============================================================ */
+function renderRecordatorios(host) {
+  const items = state.vehiculos
+    .filter(v => !v.deletedAt)
+    .map(v => {
+      const ult = ultimoServicio(v.id);
+      if (!ult || !ult.proxFecha) return null;
+      const dias = daysBetween(ult.proxFecha);
+      if (dias === null || dias > state.config.reminderDays) return null;
+      return { v, ult, dias };
+    })
+    .filter(Boolean)
+    .sort((a,b) => a.dias - b.dias);
+
+  host.innerHTML = `
+    <div class="mb-5 flex items-start gap-3">
+      <div class="accent-line mt-3"></div>
+      <p class="text-[var(--ink-soft)] max-w-2xl">Estos son los clientes que necesitan ser contactados. Toca el botón de <strong class="text-[#16a34a]">WhatsApp</strong>, <strong class="text-[#007AFF]">SMS</strong> o <strong>Email</strong> y se abrirá el mensaje listo para enviar.</p>
+    </div>
+
+    ${items.length === 0 ? `
+      <div class="card empty">
+        <div class="empty-icon"><i data-lucide="check-circle-2" class="w-7 h-7"></i></div>
+        <div class="font-display text-2xl text-[var(--ink)]">No hay recordatorios pendientes</div>
+        <div class="text-sm mt-2">Todos los servicios están al corriente.</div>
+      </div>
+    ` : `
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        ${items.map(({v, ult, dias}) => {
+          const cli = clienteById(v.clienteId);
+          const st = reminderStatus(dias);
+          const msg = buildMessage('whatsapp', cli, v, ult);
+          const msgSms = buildMessage('sms', cli, v, ult);
+          const msgMail = buildMessage('email', cli, v, ult);
+          const phone = (state.config.country + (cli?.telefono||'')).replace(/\D/g,'');
+          const phoneIntl = '+' + phone;
+          const wa = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+          const sms = `sms:${phoneIntl}?body=${encodeURIComponent(msgSms)}`;
+          const mail = cli?.email ? `mailto:${cli.email}?subject=${encodeURIComponent('Recordatorio de servicio - ' + v.marca + ' ' + v.modelo)}&body=${encodeURIComponent(msgMail)}` : null;
+          return `
+            <div class="card card-pad">
+              <div class="flex items-start justify-between gap-3 mb-3">
+                <div class="min-w-0">
+                  <div class="font-display text-xl font-semibold">${escapeHtml(cli?.nombre || 'Cliente')}</div>
+                  <div class="text-sm text-[var(--ink-soft)]">${escapeHtml(v.marca)} ${escapeHtml(v.modelo)} ${v.anio} · <span class="font-mono">${escapeHtml(v.placa)}</span></div>
+                </div>
+                <span class="badge ${st.badge} shrink-0">${st.label}</span>
+              </div>
+              <div class="text-xs text-[var(--ink-muted)] uppercase tracking-wider font-semibold mb-1">Último servicio</div>
+              <div class="text-sm mb-3">${escapeHtml(ult.tipo)} · ${fmtDate(ult.fecha)} · <span class="font-mono">${fmtKm(ult.km)}</span></div>
+              <div class="text-xs text-[var(--ink-muted)] uppercase tracking-wider font-semibold mb-1">Próximo servicio</div>
+              <div class="text-sm mb-4">${fmtDate(ult.proxFecha)}${ult.proxKm ? ' · <span class="font-mono">'+fmtKm(ult.proxKm)+'</span>' : ''}</div>
+              <div class="flex flex-wrap gap-2 pt-3 border-t border-[var(--border)]">
+                ${cli?.telefono ? `<a class="chip chip-wa" href="${wa}" target="_blank"><i data-lucide="message-circle" class="w-4 h-4"></i>WhatsApp</a>` : ''}
+                ${cli?.telefono ? `<a class="chip chip-sms" href="${sms}"><i data-lucide="smartphone" class="w-4 h-4"></i>SMS</a>` : ''}
+                ${mail ? `<a class="chip chip-mail" href="${mail}"><i data-lucide="mail" class="w-4 h-4"></i>Email</a>` : ''}
+                <button class="chip" onclick="editAndSend('${cli?.id||''}','${v.id}','${ult.id}')"><i data-lucide="pencil" class="w-4 h-4"></i>Editar mensaje</button>
+                ${!cli?.telefono && !cli?.email ? `<span class="badge badge-warning"><i data-lucide="alert-circle" class="w-3 h-3"></i>Sin contacto registrado</span>` : ''}
+              </div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    `}
+  `;
+}
+
+function buildMessage(type, cli, veh, ult) {
+  const tpl = type === 'whatsapp' ? state.config.templateWhatsapp
+            : type === 'sms' ? state.config.templateSms
+            : state.config.templateEmail;
+  return tpl
+    .replace(/{nombre}/g, cli?.nombre || '')
+    .replace(/{taller}/g, state.config.workshop || '')
+    .replace(/{marca}/g, veh?.marca || '')
+    .replace(/{modelo}/g, veh?.modelo || '')
+    .replace(/{anio}/g, veh?.anio || '')
+    .replace(/{placa}/g, veh?.placa || '')
+    .replace(/{fecha}/g, fmtDate(ult?.proxFecha))
+    .replace(/{ultimo_servicio_tipo}/g, ult?.tipo || '')
+    .replace(/{ultimo_servicio_fecha}/g, fmtDate(ult?.fecha));
+}
+
+function editAndSend(clienteId, vehiculoId, ultId) {
+  const cli = clienteById(clienteId);
+  const v = vehiculoById(vehiculoId);
+  const ult = state.servicios.find(s => s.id === ultId);
+  if (!cli || !v || !ult) { toast('Datos incompletos', 'alert-circle'); return; }
+
+  const defaultMsg = buildMessage('whatsapp', cli, v, ult);
+
+  openModal(`
+    <div class="p-6">
+      <div class="font-display text-2xl font-semibold mb-1">Editar mensaje</div>
+      <div class="text-sm text-[var(--ink-soft)] mb-4">Personaliza el mensaje para <strong>${escapeHtml(cli.nombre)}</strong> antes de enviarlo. Los cambios solo aplican a este envío.</div>
+
+      <label class="label">Mensaje</label>
+      <textarea id="edit-msg" class="textarea" rows="11" style="min-height:240px;font-family:'Plus Jakarta Sans',sans-serif;line-height:1.5">${escapeHtml(defaultMsg)}</textarea>
+      <div class="text-xs text-[var(--ink-muted)] mt-2 flex items-center gap-2">
+        <i data-lucide="info" class="w-3.5 h-3.5"></i>
+        <span>Para cambiar la plantilla por defecto de todos los clientes, ve a <strong>Configuración → Plantillas</strong>.</span>
+      </div>
+
+      <div class="flex flex-wrap gap-2 mt-5 pt-4 border-t border-[var(--border)]">
+        ${cli.telefono ? `<button class="chip chip-wa" onclick="sendEditedMessage('whatsapp','${clienteId}','${vehiculoId}')"><i data-lucide="message-circle" class="w-4 h-4"></i>Enviar por WhatsApp</button>` : ''}
+        ${cli.telefono ? `<button class="chip chip-sms" onclick="sendEditedMessage('sms','${clienteId}','${vehiculoId}')"><i data-lucide="smartphone" class="w-4 h-4"></i>Enviar por SMS</button>` : ''}
+        ${cli.email ? `<button class="chip chip-mail" onclick="sendEditedMessage('email','${clienteId}','${vehiculoId}')"><i data-lucide="mail" class="w-4 h-4"></i>Enviar por Email</button>` : ''}
+        <button class="chip" onclick="resetEditedMessage('${clienteId}','${vehiculoId}','${ultId}')" title="Restaurar el texto original de la plantilla"><i data-lucide="rotate-ccw" class="w-4 h-4"></i>Restaurar</button>
+        <button class="chip" onclick="copyEditedMessage()"><i data-lucide="copy" class="w-4 h-4"></i>Copiar</button>
+        <div class="ml-auto"><button class="btn btn-ghost" onclick="closeModal()">Cerrar</button></div>
+      </div>
+      ${!cli.telefono && !cli.email ? `
+        <div class="mt-3 p-3 bg-[var(--warning-soft)] rounded-lg text-sm" style="color:#854D0E">
+          <i data-lucide="alert-triangle" class="w-4 h-4 inline"></i>
+          Este cliente no tiene teléfono ni email registrado. Agrégalos en <strong>Clientes</strong> para poder enviar.
+        </div>` : ''}
+    </div>
+  `);
+}
+
+function sendEditedMessage(channel, clienteId, vehiculoId) {
+  const cli = clienteById(clienteId);
+  const v = vehiculoById(vehiculoId);
+  const msg = document.getElementById('edit-msg').value.trim();
+  if (!msg) { toast('El mensaje está vacío', 'alert-circle'); return; }
+
+  let url;
+  if (channel === 'whatsapp') {
+    const phone = (state.config.country + (cli.telefono||'')).replace(/\D/g,'');
+    url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+    window.open(url, '_blank');
+  } else if (channel === 'sms') {
+    const phone = '+' + (state.config.country + (cli.telefono||'')).replace(/\D/g,'');
+    url = `sms:${phone}?body=${encodeURIComponent(msg)}`;
+    window.location.href = url;
+  } else if (channel === 'email') {
+    const subject = 'Recordatorio de servicio' + (v ? ' - ' + v.marca + ' ' + v.modelo : '');
+    url = `mailto:${cli.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(msg)}`;
+    window.location.href = url;
+  }
+  toast('Abriendo ' + (channel==='whatsapp'?'WhatsApp':channel==='sms'?'mensajes':'correo') + '…');
+}
+
+function resetEditedMessage(clienteId, vehiculoId, ultId) {
+  const cli = clienteById(clienteId);
+  const v = vehiculoById(vehiculoId);
+  const ult = state.servicios.find(s => s.id === ultId);
+  const el = document.getElementById('edit-msg');
+  if (el) {
+    el.value = buildMessage('whatsapp', cli, v, ult);
+    toast('Mensaje restaurado');
+  }
+}
+
+function copyEditedMessage() {
+  const el = document.getElementById('edit-msg');
+  if (!el) return;
+  el.select();
+  try {
+    navigator.clipboard.writeText(el.value).then(() => toast('Copiado al portapapeles', 'copy'));
+  } catch {
+    document.execCommand('copy');
+    toast('Copiado al portapapeles', 'copy');
+  }
+}
+
+/* ============================================================
+   VIEW: CLIENTES
+============================================================ */
+function renderClientes(host) {
+  const inTrash = state.subview === 'trash';
+  const all = state.clientes;
+  const active = all.filter(c => !c.deletedAt);
+  const trashed = all.filter(c => c.deletedAt);
+  const sourceList = inTrash ? trashed : active;
+
+  setActions(trashActionsHTML('clientes', 'clientes', inTrash ? '' : `<button class="btn btn-primary" onclick="modalCliente()"><i data-lucide="plus" class="w-4 h-4"></i>Nuevo cliente</button>`));
+
+  const q = (state.search||'').toLowerCase();
+  const list = sourceList
+    .filter(c => !q || c.nombre.toLowerCase().includes(q) || (c.telefono||'').includes(q) || (c.email||'').toLowerCase().includes(q))
+    .sort((a,b) => inTrash ? (b.deletedAt||'').localeCompare(a.deletedAt||'') : a.nombre.localeCompare(b.nombre));
+
+  host.innerHTML = `
+    ${inTrash ? trashHelpHTML('clientes') : ''}
+    <div class="mb-4">
+      <input class="input max-w-md" placeholder="Buscar por nombre, teléfono o email…" value="${escapeHtml(state.search)}" oninput="state.search=this.value; render()" />
+    </div>
+    <div class="card overflow-hidden">
+      ${list.length === 0 ? (inTrash
+        ? `<div class="empty"><div class="empty-icon"><i data-lucide="trash-2" class="w-6 h-6"></i></div><div class="font-display text-2xl text-[var(--ink)]">Papelera vacía</div><div class="text-sm mt-2 mb-5">Los clientes eliminados aparecerán aquí.</div><button class="btn btn-primary" onclick="toggleSubview()"><i data-lucide="arrow-left" class="w-4 h-4"></i>Volver a clientes</button></div>`
+        : emptyState('users', 'No hay clientes', 'Agrega tu primer cliente para empezar.', 'Nuevo cliente', 'modalCliente()')
+      ) : `
+      <div class="overflow-x-auto">
+        <table class="table">
+          <thead><tr>
+            <th>Cliente</th><th>Teléfono</th><th>Email</th>
+            ${inTrash ? '<th>Eliminado</th>' : '<th>Vehículos</th>'}
+            <th></th>
+          </tr></thead>
+          <tbody>
+            ${list.map(c => {
+              const vs = inTrash ? [] : vehiculosByCliente(c.id).filter(v => !v.deletedAt);
+              return `
+                <tr ${inTrash ? 'style="opacity:0.75"' : ''}>
+                  <td>
+                    <div class="font-semibold">${escapeHtml(c.nombre)}</div>
+                    ${c.notas ? `<div class="text-xs text-[var(--ink-muted)] mt-0.5">${escapeHtml(c.notas)}</div>` : ''}
+                  </td>
+                  <td class="font-mono text-sm">${escapeHtml(c.telefono || '—')}</td>
+                  <td class="text-sm">${escapeHtml(c.email || '—')}</td>
+                  ${inTrash
+                    ? `<td class="text-sm text-[var(--ink-soft)]">${diasEnPapeleraLabel(c.deletedAt)}<div class="text-xs text-[var(--ink-muted)]">${fmtDate((c.deletedAt||'').slice(0,10))}</div></td>`
+                    : `<td>${vs.length > 0 ? `<span class="badge badge-neutral">${vs.length} ${vs.length===1?'vehículo':'vehículos'}</span>` : '<span class="text-[var(--ink-muted)] text-sm">—</span>'}</td>`}
+                  <td class="text-right whitespace-nowrap">
+                    ${inTrash ? `
+                      <button class="btn btn-ghost btn-sm" onclick='restoreCliente(${JSON.stringify(c.id)})'><i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>Restaurar</button>
+                      <button class="btn-icon" onclick='permanentDeleteCliente(${JSON.stringify(c.id)})' title="Eliminar para siempre"><i data-lucide="x" class="w-4 h-4"></i></button>
+                    ` : `
+                      <button class="btn-icon" onclick='modalCliente(${JSON.stringify(c.id)})' title="Editar"><i data-lucide="pencil" class="w-4 h-4"></i></button>
+                      <button class="btn-icon" onclick='deleteCliente(${JSON.stringify(c.id)})' title="Mover a papelera"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                    `}
+                  </td>
+                </tr>
+              `;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>`}
+    </div>
+  `;
+}
+
+function modalCliente(id) {
+  const c = id ? clienteById(id) : { id:'', nombre:'', telefono:'', email:'', notas:'' };
+  openModal(`
+    <div class="p-6">
+      <div class="font-display text-2xl font-semibold mb-1">${id ? 'Editar' : 'Nuevo'} cliente</div>
+      <div class="text-sm text-[var(--ink-soft)] mb-5">Datos de contacto del cliente.</div>
+      <form onsubmit="event.preventDefault(); saveCliente('${id||''}')">
+        <div class="space-y-4">
+          <div><label class="label">Nombre completo *</label><input id="f-nombre" class="input" required value="${escapeHtml(c.nombre)}" /></div>
+          <div class="grid grid-cols-2 gap-3">
+            <div><label class="label">Teléfono</label><input id="f-telefono" class="input font-mono" placeholder="10 dígitos" value="${escapeHtml(c.telefono)}" inputmode="numeric" oninput="this.value=this.value.replace(/\D/g,'')" /></div>
+            <div><label class="label">Email</label><input id="f-email" type="email" class="input" value="${escapeHtml(c.email)}" /></div>
+          </div>
+          <div><label class="label">Notas</label><textarea id="f-notas" class="textarea" rows="2">${escapeHtml(c.notas)}</textarea></div>
+        </div>
+        <div class="flex justify-end gap-2 mt-6">
+          <button type="button" class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
+          <button type="submit" class="btn btn-primary"><i data-lucide="check" class="w-4 h-4"></i>Guardar</button>
+        </div>
+      </form>
+    </div>
+  `);
+}
+
+async function saveCliente(id) {
+  const nombre = document.getElementById('f-nombre').value.trim();
+  if (!nombre) { toast('El nombre es obligatorio', 'alert-circle'); return; }
+  const telefono = document.getElementById('f-telefono').value.trim().replace(/\D/g,'');
+  if (telefono && telefono.length < 7) {
+    toast('Teléfono incompleto', 'alert-circle');
+    return;
+  }
+  const data = {
+    id: id || uid('c_'),
+    nombre,
+    telefono,
+    email: document.getElementById('f-email').value.trim(),
+    notas: document.getElementById('f-notas').value.trim(),
+    createdAt: id ? clienteById(id).createdAt : today()
+  };
+  if (id) {
+    const i = state.clientes.findIndex(c => c.id === id);
+    state.clientes[i] = { ...state.clientes[i], ...data };
+  } else {
+    state.clientes.push(data);
+  }
+  await saveTable('clientes', state.clientes);
+  closeModal();
+  toast(id ? 'Cliente actualizado' : 'Cliente creado');
+  render();
+}
+
+async function deleteCliente(id) {
+  const c = clienteById(id);
+  const activeVehs = state.vehiculos.filter(v => !v.deletedAt && v.clienteId === id);
+  let desc = c?.nombre
+    ? `"${c.nombre}" se moverá a la papelera. Podrás restaurarlo después si fue por error.`
+    : 'El cliente se moverá a la papelera.';
+  if (activeVehs.length > 0) {
+    desc += ` Sus ${activeVehs.length} vehículo(s) seguirán visibles pero sin dueño asignado.`;
+  }
+  const ok = await confirm2('¿Eliminar este cliente?', {
+    description: desc,
+    confirmText: 'Mover a papelera'
+  });
+  if (!ok) return;
+  await softDeleteEntity('clientes', id);
+  toast('Cliente movido a la papelera', 'trash-2');
+  render();
+}
+
+async function restoreCliente(id) {
+  await restoreEntity('clientes', id);
+  toast('Cliente restaurado', 'rotate-ccw');
+  render();
+}
+
+async function permanentDeleteCliente(id) {
+  const c = clienteById(id);
+  const ok = await confirm2('¿Eliminar para siempre?', {
+    description: c?.nombre ? `"${c.nombre}" se eliminará permanentemente. Esta acción NO se puede deshacer.` : 'Esta acción NO se puede deshacer.',
+    confirmText: 'Eliminar para siempre'
+  });
+  if (!ok) return;
+  await permanentDeleteEntity('clientes', id);
+  toast('Cliente eliminado permanentemente', 'trash-2');
+  render();
+}
+
+/* ============================================================
+   VIEW: VEHICULOS
+============================================================ */
+function renderVehiculos(host) {
+  const inTrash = state.subview === 'trash';
+  const all = state.vehiculos;
+  const active = all.filter(v => !v.deletedAt);
+  const trashed = all.filter(v => v.deletedAt);
+
+  setActions(trashActionsHTML('vehiculos', 'vehículos', inTrash ? '' : `<button class="btn btn-primary" onclick="modalVehiculo()"><i data-lucide="plus" class="w-4 h-4"></i>Nuevo vehículo</button>`));
+
+  const q = (state.search||'').toLowerCase();
+  const baseList = inTrash ? trashed : active;
+  const list = baseList
+    .filter(v => {
+      const c = clienteById(v.clienteId);
+      const hay = [v.marca, v.modelo, v.placa, c?.nombre].join(' ').toLowerCase();
+      return !q || hay.includes(q);
+    })
+    .sort((a,b) => inTrash ? (b.deletedAt||'').localeCompare(a.deletedAt||'') : a.marca.localeCompare(b.marca));
+
+  host.innerHTML = `
+    ${inTrash ? trashHelpHTML('vehículos') : ''}
+    ${!inTrash ? `
+      <div class="mb-4">
+        <input class="input max-w-md" placeholder="Buscar por marca, modelo, placa o dueño…" value="${escapeHtml(state.search)}" oninput="state.search=this.value; render()" />
+      </div>
+    ` : ''}
+    <div class="card overflow-hidden">
+      ${list.length === 0
+        ? (inTrash
+            ? `<div class="empty"><div class="empty-icon"><i data-lucide="trash-2" class="w-6 h-6"></i></div><div class="font-display text-2xl text-[var(--ink)]">Papelera vacía</div><div class="text-sm mt-2 mb-5">Los vehículos eliminados aparecerán aquí.</div><button class="btn btn-primary" onclick="toggleSubview()"><i data-lucide="arrow-left" class="w-4 h-4"></i>Volver a vehículos</button></div>`
+            : emptyState('car', 'No hay vehículos', 'Agrega el primer vehículo de un cliente.', 'Nuevo vehículo', 'modalVehiculo()')
+          )
+        : `
+      <div class="overflow-x-auto">
+        <table class="table">
+          <thead><tr>
+            <th>Vehículo</th><th>Placa</th><th>Dueño</th><th>Kilometraje</th>
+            ${inTrash ? '<th>Eliminado</th>' : '<th>Próximo servicio</th>'}
+            <th></th>
+          </tr></thead>
+          <tbody>
+            ${list.map(v => {
+              const c = clienteById(v.clienteId);
+              const ult = inTrash ? null : ultimoServicio(v.id);
+              const prox = ult?.proxFecha ? fmtDate(ult.proxFecha) : '<span class="text-[var(--ink-muted)] text-sm">Sin servicios</span>';
+              const dias = ult?.proxFecha ? daysBetween(ult.proxFecha) : null;
+              const st = reminderStatus(dias);
+              return `
+                <tr ${inTrash ? 'style="opacity:0.75"' : ''}>
+                  <td>
+                    <div class="font-semibold">${escapeHtml(v.marca)} ${escapeHtml(v.modelo)}</div>
+                    <div class="text-xs text-[var(--ink-muted)] mt-0.5">${v.anio}${v.color ? ' · ' + escapeHtml(v.color) : ''}</div>
+                  </td>
+                  <td class="font-mono">${escapeHtml(v.placa)}</td>
+                  <td class="text-sm">${escapeHtml(c?.nombre || '—')}</td>
+                  <td class="font-mono text-sm">${fmtKm(v.kmActual)}</td>
+                  ${inTrash
+                    ? `<td class="text-sm text-[var(--ink-soft)]">${diasEnPapeleraLabel(v.deletedAt)}<div class="text-xs text-[var(--ink-muted)]">${fmtDate((v.deletedAt||'').slice(0,10))}</div></td>`
+                    : `<td>${prox} ${st ? `<span class="badge ${st.badge} ml-1">${st.label}</span>` : ''}</td>`}
+                  <td class="text-right whitespace-nowrap">
+                    ${inTrash ? `
+                      <button class="btn btn-ghost btn-sm" onclick='restoreVehiculo(${JSON.stringify(v.id)})'><i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>Restaurar</button>
+                      <button class="btn-icon" onclick='permanentDeleteVehiculo(${JSON.stringify(v.id)})' title="Eliminar para siempre"><i data-lucide="x" class="w-4 h-4"></i></button>
+                    ` : `
+                      <button class="btn-icon" onclick='modalServicio("", ${JSON.stringify(v.id)})' title="Registrar servicio"><i data-lucide="wrench" class="w-4 h-4"></i></button>
+                      <button class="btn-icon" onclick='modalVehiculo(${JSON.stringify(v.id)})' title="Editar"><i data-lucide="pencil" class="w-4 h-4"></i></button>
+                      <button class="btn-icon" onclick='deleteVehiculo(${JSON.stringify(v.id)})' title="Mover a papelera"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                    `}
+                  </td>
+                </tr>
+              `;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>`}
+    </div>
+  `;
+}
+
+function modalVehiculo(id) {
+  const v = id ? vehiculoById(id) : { id:'', clienteId:'', marca:'', modelo:'', anio:new Date().getFullYear(), placa:'', color:'', kmActual:0, notas:'' };
+  const clienteOptions = state.clientes
+    .filter(c => !c.deletedAt || c.id === v.clienteId)
+    .sort((a,b)=>a.nombre.localeCompare(b.nombre))
+    .map(c => `<option value="${c.id}" ${c.id===v.clienteId?'selected':''}>${escapeHtml(c.nombre)}${c.deletedAt?' (en papelera)':''}</option>`).join('');
+  openModal(`
+    <div class="p-6">
+      <div class="font-display text-2xl font-semibold mb-1">${id ? 'Editar' : 'Nuevo'} vehículo</div>
+      <div class="text-sm text-[var(--ink-soft)] mb-5">Datos del auto registrado.</div>
+      <form onsubmit="event.preventDefault(); saveVehiculo('${id||''}')">
+        <div class="space-y-4">
+          <div>
+            <label class="label">Dueño *</label>
+            <select id="f-cliente" class="select" required>
+              <option value="">Selecciona un cliente…</option>
+              ${clienteOptions}
+            </select>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div><label class="label">Marca *</label><input id="f-marca" class="input" required value="${escapeHtml(v.marca)}" /></div>
+            <div><label class="label">Modelo *</label><input id="f-modelo" class="input" required value="${escapeHtml(v.modelo)}" /></div>
+          </div>
+          <div class="grid grid-cols-3 gap-3">
+            <div><label class="label">Año</label><input id="f-anio" type="number" class="input" value="${v.anio}" /></div>
+            <div><label class="label">Color</label><input id="f-color" class="input" value="${escapeHtml(v.color)}" /></div>
+            <div><label class="label">Placa *</label><input id="f-placa" class="input font-mono" required value="${escapeHtml(v.placa)}" style="text-transform:uppercase" oninput="this.value=this.value.toUpperCase()" /></div>
+          </div>
+          <div><label class="label">Kilometraje actual</label><input id="f-km" type="number" class="input" value="${v.kmActual}" /></div>
+          <div><label class="label">Notas</label><textarea id="f-notas" class="textarea" rows="2">${escapeHtml(v.notas)}</textarea></div>
+        </div>
+        <div class="flex justify-end gap-2 mt-6">
+          <button type="button" class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
+          <button type="submit" class="btn btn-primary"><i data-lucide="check" class="w-4 h-4"></i>Guardar</button>
+        </div>
+      </form>
+    </div>
+  `);
+}
+
+async function saveVehiculo(id) {
+  const data = {
+    id: id || uid('v_'),
+    clienteId: document.getElementById('f-cliente').value,
+    marca: document.getElementById('f-marca').value.trim(),
+    modelo: document.getElementById('f-modelo').value.trim(),
+    anio: Number(document.getElementById('f-anio').value) || new Date().getFullYear(),
+    color: document.getElementById('f-color').value.trim(),
+    placa: document.getElementById('f-placa').value.trim().toUpperCase(),
+    kmActual: Number(document.getElementById('f-km').value) || 0,
+    notas: document.getElementById('f-notas').value.trim()
+  };
+  if (id) {
+    const i = state.vehiculos.findIndex(v => v.id === id);
+    state.vehiculos[i] = { ...state.vehiculos[i], ...data };
+  } else {
+    state.vehiculos.push(data);
+  }
+  await saveTable('vehiculos', state.vehiculos);
+  closeModal();
+  toast(id ? 'Vehículo actualizado' : 'Vehículo creado');
+  render();
+}
+
+async function deleteVehiculo(id) {
+  const v = vehiculoById(id);
+  const ss = serviciosByVehiculo(id).filter(s => !s.deletedAt);
+  const desc = v
+    ? `"${v.marca} ${v.modelo}" se moverá a la papelera. ${ss.length > 0 ? `Sus ${ss.length} servicio(s) seguirán en el historial.` : ''} Podrás restaurarlo después.`
+    : 'Se moverá a la papelera. Podrás restaurarlo después.';
+  const ok = await confirm2('¿Eliminar este vehículo?', {
+    description: desc,
+    confirmText: 'Mover a papelera'
+  });
+  if (!ok) return;
+  await softDeleteEntity('vehiculos', id);
+  toast('Movido a la papelera', 'trash-2');
+  render();
+}
+
+async function restoreVehiculo(id) {
+  await restoreEntity('vehiculos', id);
+  toast('Vehículo restaurado', 'rotate-ccw');
+  render();
+}
+
+async function permanentDeleteVehiculo(id) {
+  const v = state.vehiculos.find(x => x.id === id);
+  const ss = serviciosByVehiculo(id);
+  const desc = (v ? `"${v.marca} ${v.modelo}"` : 'El vehículo') + ' se eliminará permanentemente.' +
+    (ss.length > 0 ? ` También se eliminarán sus ${ss.length} servicio(s) registrado(s).` : '') +
+    ' Esta acción NO se puede deshacer.';
+  const ok = await confirm2('¿Eliminar para siempre?', {
+    description: desc,
+    confirmText: 'Eliminar para siempre'
+  });
+  if (!ok) return;
+  // Cascade: hard-delete services of this vehicle too
+  state.servicios = state.servicios.filter(s => s.vehiculoId !== id);
+  await saveTable('servicios', state.servicios);
+  await permanentDeleteEntity('vehiculos', id);
+  toast('Vehículo eliminado permanentemente', 'trash-2');
+  render();
+}
+
+/* ============================================================
+   VIEW: SERVICIOS
+============================================================ */
+function renderServicios(host) {
+  const inTrash = state.subview === 'trash';
+  const all = state.servicios;
+  const active = all.filter(s => !s.deletedAt);
+  const trashed = all.filter(s => s.deletedAt);
+
+  setActions(trashActionsHTML('servicios', 'servicios', inTrash ? '' : `<button class="btn btn-primary" onclick="modalServicio()"><i data-lucide="plus" class="w-4 h-4"></i>Registrar servicio</button>`));
+
+  const q = (state.search||'').toLowerCase();
+  const baseList = inTrash ? trashed : active;
+  const list = [...baseList]
+    .filter(s => {
+      if (!q) return true;
+      const v = vehiculoById(s.vehiculoId);
+      const c = v ? clienteById(v.clienteId) : null;
+      const hay = [s.tipo, s.descripcion, v?.marca, v?.modelo, v?.placa, c?.nombre].join(' ').toLowerCase();
+      return hay.includes(q);
+    })
+    .sort((a,b) => inTrash ? (b.deletedAt||'').localeCompare(a.deletedAt||'') : b.fecha.localeCompare(a.fecha));
+
+  host.innerHTML = `
+    ${inTrash ? trashHelpHTML('servicios') : ''}
+    ${!inTrash ? `
+      <div class="mb-4">
+        <input class="input max-w-md" placeholder="Buscar servicio, vehículo o cliente…" value="${escapeHtml(state.search)}" oninput="state.search=this.value; render()" />
+      </div>
+    ` : ''}
+    <div class="card overflow-hidden">
+      ${list.length === 0
+        ? (inTrash
+            ? `<div class="empty"><div class="empty-icon"><i data-lucide="trash-2" class="w-6 h-6"></i></div><div class="font-display text-2xl text-[var(--ink)]">Papelera vacía</div><div class="text-sm mt-2 mb-5">Los servicios eliminados aparecerán aquí.</div><button class="btn btn-primary" onclick="toggleSubview()"><i data-lucide="arrow-left" class="w-4 h-4"></i>Volver a servicios</button></div>`
+            : emptyState('wrench', 'No hay servicios registrados', 'Registra el primer servicio para empezar a generar recordatorios.', 'Registrar servicio', 'modalServicio()')
+          )
+        : `
+      <div class="overflow-x-auto">
+        <table class="table">
+          <thead><tr>
+            <th>Fecha</th><th>Tipo de servicio</th><th>Vehículo</th><th>Cliente</th><th>KM</th><th>Costo</th>
+            ${inTrash ? '<th>Eliminado</th>' : '<th>Próximo</th>'}
+            <th></th>
+          </tr></thead>
+          <tbody>
+            ${list.map(s => {
+              const v = vehiculoById(s.vehiculoId);
+              const c = v ? clienteById(v.clienteId) : null;
+              return `
+                <tr ${inTrash ? 'style="opacity:0.75"' : ''}>
+                  <td class="text-sm">${fmtDate(s.fecha)}</td>
+                  <td>
+                    <div class="font-semibold">${escapeHtml(s.tipo)}</div>
+                    ${s.descripcion ? `<div class="text-xs text-[var(--ink-muted)] mt-0.5">${escapeHtml(s.descripcion)}</div>` : ''}
+                  </td>
+                  <td class="text-sm">${v ? escapeHtml(v.marca + ' ' + v.modelo) + ' · <span class="font-mono">' + escapeHtml(v.placa) + '</span>' : '—'}</td>
+                  <td class="text-sm">${escapeHtml(c?.nombre || '—')}</td>
+                  <td class="font-mono text-sm">${fmtKm(s.km)}</td>
+                  <td class="font-mono text-sm">${fmtMoney(s.costo)}</td>
+                  ${inTrash
+                    ? `<td class="text-sm text-[var(--ink-soft)]">${diasEnPapeleraLabel(s.deletedAt)}<div class="text-xs text-[var(--ink-muted)]">${fmtDate((s.deletedAt||'').slice(0,10))}</div></td>`
+                    : `<td class="text-sm">${s.proxFecha ? fmtDate(s.proxFecha) : '—'}</td>`}
+                  <td class="text-right whitespace-nowrap">
+                    ${inTrash ? `
+                      <button class="btn btn-ghost btn-sm" onclick='restoreServicio(${JSON.stringify(s.id)})'><i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>Restaurar</button>
+                      <button class="btn-icon" onclick='permanentDeleteServicio(${JSON.stringify(s.id)})' title="Eliminar para siempre"><i data-lucide="x" class="w-4 h-4"></i></button>
+                    ` : `
+                      <button class="btn-icon" onclick='modalServicio(${JSON.stringify(s.id)})' title="Editar"><i data-lucide="pencil" class="w-4 h-4"></i></button>
+                      <button class="btn-icon" onclick='deleteServicio(${JSON.stringify(s.id)})' title="Mover a papelera"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                    `}
+                  </td>
+                </tr>
+              `;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>`}
+    </div>
+  `;
+}
+
+function modalServicio(id, vehiculoId) {
+  const s = id ? state.servicios.find(x => x.id === id) : { id:'', vehiculoId: vehiculoId || '', tipo:'', descripcion:'', fecha: today(), km:0, costo:0, proxFecha:'', proxKm:0 };
+  const vehOptions = state.vehiculos
+    .filter(v => !v.deletedAt || v.id === s.vehiculoId)
+    .sort((a,b) => a.marca.localeCompare(b.marca))
+    .map(v => {
+      const c = clienteById(v.clienteId);
+      return `<option value="${v.id}" ${v.id===s.vehiculoId?'selected':''}>${escapeHtml(v.marca)} ${escapeHtml(v.modelo)} · ${escapeHtml(v.placa)} (${escapeHtml(c?.nombre||'?')})${v.deletedAt?' (en papelera)':''}</option>`;
+    }).join('');
+
+  openModal(`
+    <div class="p-6">
+      <div class="font-display text-2xl font-semibold mb-1">${id ? 'Editar' : 'Registrar'} servicio</div>
+      <div class="text-sm text-[var(--ink-soft)] mb-5">Al guardar, el sistema calculará automáticamente la fecha del próximo servicio.</div>
+      <form onsubmit="event.preventDefault(); saveServicio('${id||''}')">
+        <div class="space-y-4">
+          <div>
+            <label class="label">Vehículo *</label>
+            <select id="f-vehiculo" class="select" required>
+              <option value="">Selecciona…</option>
+              ${vehOptions}
+            </select>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div><label class="label">Fecha *</label><input id="f-fecha" type="date" class="input" required value="${s.fecha}" /></div>
+            <div><label class="label">Costo</label><input id="f-costo" type="number" step="0.01" class="input" value="${s.costo}" /></div>
+          </div>
+          <div><label class="label">Tipo de servicio *</label><input id="f-tipo" class="input" required value="${escapeHtml(s.tipo)}" placeholder="Ej: Cambio de aceite" /></div>
+          <div><label class="label">Descripción / Detalles</label><textarea id="f-desc" class="textarea" rows="2">${escapeHtml(s.descripcion)}</textarea></div>
+          <div><label class="label">Kilometraje al servicio</label><input id="f-km" type="number" class="input" value="${s.km}" /></div>
+          <div class="p-4 bg-[var(--bg)] rounded-xl border border-[var(--border)]">
+            <div class="text-xs uppercase tracking-wider font-semibold text-[var(--ink-soft)] mb-3">Próximo servicio (automático)</div>
+            <div class="grid grid-cols-2 gap-3">
+              <div><label class="label">Meses</label><input id="f-meses" type="number" class="input" value="${state.config.defaultMonths}" /></div>
+              <div><label class="label">+ Kilómetros</label><input id="f-kmAdd" type="number" class="input" value="${state.config.defaultKm}" /></div>
+            </div>
+            <div class="text-xs text-[var(--ink-muted)] mt-2">Estos valores se sumarán a la fecha y kilometraje del servicio.</div>
+          </div>
+        </div>
+        <div class="flex justify-end gap-2 mt-6">
+          <button type="button" class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
+          <button type="submit" class="btn btn-primary"><i data-lucide="check" class="w-4 h-4"></i>Guardar</button>
+        </div>
+      </form>
+    </div>
+  `);
+}
+
+async function saveServicio(id) {
+  const vehiculoId = document.getElementById('f-vehiculo').value;
+  const fecha = document.getElementById('f-fecha').value;
+  const km = Number(document.getElementById('f-km').value)||0;
+  const meses = Number(document.getElementById('f-meses').value)||state.config.defaultMonths;
+  const kmAdd = Number(document.getElementById('f-kmAdd').value)||state.config.defaultKm;
+
+  const data = {
+    id: id || uid('s_'),
+    vehiculoId,
+    tipo: document.getElementById('f-tipo').value.trim(),
+    descripcion: document.getElementById('f-desc').value.trim(),
+    fecha,
+    km,
+    costo: Number(document.getElementById('f-costo').value)||0,
+    proxFecha: addMonths(fecha, meses),
+    proxKm: km + kmAdd
+  };
+  if (id) {
+    const i = state.servicios.findIndex(s => s.id === id);
+    state.servicios[i] = { ...state.servicios[i], ...data };
+  } else {
+    state.servicios.push(data);
+  }
+  // also update vehicle kmActual if higher
+  const v = vehiculoById(vehiculoId);
+  if (v && km > v.kmActual) {
+    v.kmActual = km;
+    await saveTable('vehiculos', state.vehiculos);
+  }
+  await saveTable('servicios', state.servicios);
+  closeModal();
+  toast(id ? 'Servicio actualizado' : 'Servicio registrado');
+  render();
+}
+
+async function deleteServicio(id) {
+  const s = state.servicios.find(x => x.id === id);
+  const ok = await confirm2('¿Eliminar este servicio?', {
+    description: s ? `El servicio "${s.tipo}" del ${fmtDate(s.fecha)} se moverá a la papelera. Podrás restaurarlo después.` : 'El servicio se moverá a la papelera.',
+    confirmText: 'Mover a papelera'
+  });
+  if (!ok) return;
+  await softDeleteEntity('servicios', id);
+  toast('Movido a la papelera', 'trash-2');
+  render();
+}
+
+async function restoreServicio(id) {
+  await restoreEntity('servicios', id);
+  toast('Servicio restaurado', 'rotate-ccw');
+  render();
+}
+
+async function permanentDeleteServicio(id) {
+  const s = state.servicios.find(x => x.id === id);
+  const ok = await confirm2('¿Eliminar para siempre?', {
+    description: s ? `"${s.tipo}" del ${fmtDate(s.fecha)} se eliminará permanentemente. Esta acción NO se puede deshacer.` : 'Esta acción NO se puede deshacer.',
+    confirmText: 'Eliminar para siempre'
+  });
+  if (!ok) return;
+  await permanentDeleteEntity('servicios', id);
+  toast('Servicio eliminado permanentemente', 'trash-2');
+  render();
+}
+
+/* ============================================================
+   VIEW: TICKETS
+============================================================ */
+function ticketById(id) { return state.tickets.find(t => t.id === id); }
+
+function computeTicketTotals(t) {
+  const subtotal = (t.items||[]).reduce((a, i) => a + (Number(i.cantidad)||0) * (Number(i.precioUnit)||0), 0) + (Number(t.manoObra)||0);
+  const ivaPct = Number(t.ivaPercent ?? state.config.ivaPercent ?? 0);
+  const iva = subtotal * (ivaPct/100);
+  const total = subtotal + iva;
+  return { subtotal, iva, total, ivaPct };
+}
+
+function fmtFolio(prefix, num) {
+  return (prefix||'A') + '-' + String(num||0).padStart(4,'0');
+}
+
+function renderTickets(host) {
+  if (state.view_ticket_id) {
+    return renderTicketDetail(host, state.view_ticket_id);
+  }
+  const inTrash = state.subview === 'trash';
+  const all = state.tickets;
+  const active = all.filter(t => !t.deletedAt);
+  const trashed = all.filter(t => t.deletedAt);
+
+  setActions(trashActionsHTML('tickets', 'tickets', inTrash ? '' : `<button class="btn btn-primary" onclick="modalTicket()"><i data-lucide="plus" class="w-4 h-4"></i>Nuevo ticket</button>`));
+
+  const q = (state.search||'').toLowerCase();
+  const baseList = inTrash ? trashed : active;
+  const list = [...baseList]
+    .filter(t => {
+      if (!q) return true;
+      const v = vehiculoById(t.vehiculoId);
+      const c = clienteById(t.clienteId);
+      const hay = [t.folio, c?.nombre, v?.marca, v?.modelo, v?.placa].join(' ').toLowerCase();
+      return hay.includes(q);
+    })
+    .sort((a,b) => inTrash ? (b.deletedAt||'').localeCompare(a.deletedAt||'') : (b.fecha||'').localeCompare(a.fecha||''));
+
+  const totalCobrado = active.filter(t => t.estado==='pagado').reduce((a,t) => a + computeTicketTotals(t).total, 0);
+  const totalPendiente = active.filter(t => t.estado==='pendiente').reduce((a,t) => a + computeTicketTotals(t).total, 0);
+
+  host.innerHTML = `
+    ${inTrash ? trashHelpHTML('tickets') : `
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-5">
+        <div class="card card-tight"><div class="kpi-label">Tickets totales</div><div class="font-display text-2xl font-semibold mt-1">${active.length}</div></div>
+        <div class="card card-tight"><div class="kpi-label">Pagados</div><div class="font-display text-2xl font-semibold mt-1">${active.filter(t=>t.estado==='pagado').length}</div></div>
+        <div class="card card-tight"><div class="kpi-label">Cobrado</div><div class="font-display text-2xl font-semibold mt-1">${fmtMoney(totalCobrado)}</div></div>
+        <div class="card card-tight" style="${totalPendiente>0?'background:#FEF3C7;border-color:#FCD34D':''}"><div class="kpi-label">Por cobrar</div><div class="font-display text-2xl font-semibold mt-1">${fmtMoney(totalPendiente)}</div></div>
+      </div>
+    `}
+    ${!inTrash ? `
+      <div class="mb-4">
+        <input class="input max-w-md" placeholder="Buscar folio, cliente, vehículo o placa…" value="${escapeHtml(state.search)}" oninput="state.search=this.value; render()" />
+      </div>
+    ` : ''}
+    <div class="card overflow-hidden">
+      ${list.length === 0
+        ? (inTrash
+            ? `<div class="empty"><div class="empty-icon"><i data-lucide="trash-2" class="w-6 h-6"></i></div><div class="font-display text-2xl text-[var(--ink)]">Papelera vacía</div><div class="text-sm mt-2 mb-5">Los tickets eliminados aparecerán aquí.</div><button class="btn btn-primary" onclick="toggleSubview()"><i data-lucide="arrow-left" class="w-4 h-4"></i>Volver a tickets</button></div>`
+            : emptyState('receipt', 'No hay tickets', 'Crea el primer ticket u orden de trabajo.', 'Nuevo ticket', 'modalTicket()')
+          )
+        : `
+      <div class="overflow-x-auto">
+        <table class="table">
+          <thead><tr>
+            <th>Folio</th><th>Fecha</th><th>Cliente</th><th>Vehículo</th><th>Total</th>
+            ${inTrash ? '<th>Eliminado</th>' : '<th>Estado</th>'}
+            <th></th>
+          </tr></thead>
+          <tbody>
+            ${list.map(t => {
+              const c = clienteById(t.clienteId);
+              const v = vehiculoById(t.vehiculoId);
+              const { total } = computeTicketTotals(t);
+              const est = t.estado || 'pendiente';
+              const badge = est==='pagado'?'badge-success':est==='cancelado'?'badge-danger':'badge-warning';
+              const rowAttrs = inTrash ? 'style="opacity:0.75"' : `style="cursor:pointer" onclick='viewTicket(${JSON.stringify(t.id)})'`;
+              return `
+                <tr ${rowAttrs}>
+                  <td class="font-mono font-semibold">${escapeHtml(t.folio)}</td>
+                  <td class="text-sm">${fmtDate(t.fecha)}</td>
+                  <td class="text-sm">${escapeHtml(c?.nombre || '—')}</td>
+                  <td class="text-sm">${v ? escapeHtml(v.marca+' '+v.modelo)+' · <span class="font-mono">'+escapeHtml(v.placa)+'</span>' : '—'}</td>
+                  <td class="font-mono font-semibold">${fmtMoney(total)}</td>
+                  ${inTrash
+                    ? `<td class="text-sm text-[var(--ink-soft)]">${diasEnPapeleraLabel(t.deletedAt)}<div class="text-xs text-[var(--ink-muted)]">${fmtDate((t.deletedAt||'').slice(0,10))}</div></td>`
+                    : `<td><span class="badge ${badge}">${est}</span></td>`}
+                  <td class="text-right whitespace-nowrap" onclick="event.stopPropagation()">
+                    ${inTrash ? `
+                      <button class="btn btn-ghost btn-sm" onclick='restoreTicket(${JSON.stringify(t.id)})'><i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>Restaurar</button>
+                      <button class="btn-icon" onclick='permanentDeleteTicket(${JSON.stringify(t.id)})' title="Eliminar para siempre"><i data-lucide="x" class="w-4 h-4"></i></button>
+                    ` : `
+                      <button class="btn-icon" onclick='viewTicket(${JSON.stringify(t.id)})' title="Ver/imprimir"><i data-lucide="eye" class="w-4 h-4"></i></button>
+                      <button class="btn-icon" onclick='modalTicket(${JSON.stringify(t.id)})' title="Editar"><i data-lucide="pencil" class="w-4 h-4"></i></button>
+                      <button class="btn-icon" onclick='deleteTicket(${JSON.stringify(t.id)})' title="Mover a papelera"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                    `}
+                  </td>
+                </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>`}
+    </div>
+  `;
+}
+
+function viewTicket(id) {
+  state.view_ticket_id = id;
+  render();
+}
+
+function backToTickets() {
+  state.view_ticket_id = null;
+  render();
+}
+
+function renderTicketDetail(host, id) {
+  const t = ticketById(id);
+  if (!t) { state.view_ticket_id = null; render(); return; }
+  const c = clienteById(t.clienteId);
+  const v = vehiculoById(t.vehiculoId);
+  const totals = computeTicketTotals(t);
+  const cfg = state.config;
+  const est = t.estado || 'pendiente';
+
+  setActions(`
+    <button class="btn btn-ghost btn-sm no-print" onclick="backToTickets()"><i data-lucide="arrow-left" class="w-4 h-4"></i>Volver</button>
+    <button class="btn btn-ghost btn-sm no-print" onclick="modalTicket('${id}')"><i data-lucide="pencil" class="w-4 h-4"></i>Editar</button>
+    <button class="btn btn-primary no-print" onclick="window.print()"><i data-lucide="printer" class="w-4 h-4"></i>Imprimir / PDF</button>
+  `);
+
+  host.innerHTML = `
+    <div class="ticket-doc">
+      <div class="t-header">
+        <div class="t-brand">
+          <div class="t-initials">${escapeHtml(getInitials(cfg.workshop))}</div>
+          <div>
+            <div class="t-workshop-name">${escapeHtml(cfg.workshop || 'Taller Elvira')}</div>
+            <div class="t-workshop-meta">
+              ${cfg.address ? escapeHtml(cfg.address) + '<br>' : ''}
+              ${cfg.phone ? 'Tel: ' + escapeHtml(cfg.phone) : ''}
+              ${cfg.rfc ? ' · RFC: ' + escapeHtml(cfg.rfc) : ''}
+            </div>
+          </div>
+        </div>
+        <div class="t-folio">
+          <div class="t-folio-label">Folio</div>
+          <div class="t-folio-num">${escapeHtml(t.folio)}</div>
+          <div class="t-folio-label" style="margin-top:8px">Fecha</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:13px">${fmtDate(t.fecha)}</div>
+          <div style="margin-top:8px"><span class="ticket-status ${est}">${est}</span></div>
+        </div>
+      </div>
+
+      <div class="t-blocks">
+        <div>
+          <div class="t-block-label">Cliente</div>
+          <div class="t-block-content">
+            <strong>${escapeHtml(c?.nombre || '—')}</strong><br>
+            ${c?.telefono ? 'Tel: '+escapeHtml(c.telefono)+'<br>' : ''}
+            ${c?.email ? escapeHtml(c.email) : ''}
+          </div>
+        </div>
+        <div>
+          <div class="t-block-label">Vehículo</div>
+          <div class="t-block-content">
+            ${v ? `<strong>${escapeHtml(v.marca)} ${escapeHtml(v.modelo)} ${v.anio}</strong><br>
+              Placa: <span style="font-family:monospace">${escapeHtml(v.placa)}</span>${v.color?' · '+escapeHtml(v.color):''}<br>
+              KM: ${fmtKm(v.kmActual)}` : '—'}
+          </div>
+        </div>
+      </div>
+
+      <table class="t-items">
+        <thead><tr>
+          <th style="width:50%">Concepto / Descripción</th>
+          <th class="num" style="width:12%">Cant.</th>
+          <th class="num" style="width:19%">P. Unit.</th>
+          <th class="num" style="width:19%">Importe</th>
+        </tr></thead>
+        <tbody>
+          ${(t.items||[]).map(i => `
+            <tr>
+              <td>${escapeHtml(i.descripcion)}</td>
+              <td class="num">${Number(i.cantidad||0)}</td>
+              <td class="num">${fmtMoney(i.precioUnit)}</td>
+              <td class="num">${fmtMoney((Number(i.cantidad)||0)*(Number(i.precioUnit)||0))}</td>
+            </tr>
+          `).join('')}
+          ${Number(t.manoObra)>0 ? `
+            <tr>
+              <td><strong>Mano de obra</strong>${t.descripcionManoObra?'<br><span style="font-size:11px;color:#666">'+escapeHtml(t.descripcionManoObra)+'</span>':''}</td>
+              <td class="num">1</td>
+              <td class="num">${fmtMoney(t.manoObra)}</td>
+              <td class="num">${fmtMoney(t.manoObra)}</td>
+            </tr>` : ''}
+          ${(!t.items || t.items.length===0) && !Number(t.manoObra) ? '<tr><td colspan="4" style="text-align:center;color:#999;padding:20px">Sin conceptos</td></tr>' : ''}
+        </tbody>
+      </table>
+
+      <div class="t-totals">
+        <div class="row"><span>Subtotal</span><span class="num">${fmtMoney(totals.subtotal)}</span></div>
+        ${totals.ivaPct > 0 ? `<div class="row"><span>IVA (${totals.ivaPct}%)</span><span class="num">${fmtMoney(totals.iva)}</span></div>` : ''}
+        <div class="row grand"><span>Total</span><span class="num">${fmtMoney(totals.total)}</span></div>
+      </div>
+
+      ${t.notas ? `<div class="t-notes"><strong>Notas:</strong> ${escapeHtml(t.notas)}</div>` : ''}
+
+      <div class="t-signatures">
+        <div class="t-sig">Firma del cliente</div>
+        <div class="t-sig">Firma / Sello del taller</div>
+      </div>
+
+      <div class="t-foot">
+        Gracias por su preferencia · ${escapeHtml(cfg.workshop || 'Taller Elvira')}
+      </div>
+    </div>
+  `;
+  lucide.createIcons();
+}
+
+function modalTicket(id) {
+  const cfg = state.config;
+  const isNew = !id;
+  const t = id ? ticketById(id) : {
+    id: '',
+    folio: fmtFolio(cfg.folioPrefix, cfg.nextFolio),
+    fecha: today(),
+    clienteId: '',
+    vehiculoId: '',
+    items: [],
+    manoObra: 0,
+    descripcionManoObra: '',
+    ivaPercent: cfg.ivaPercent || 0,
+    notas: '',
+    estado: 'pendiente'
   };
 
-  // ── 6. TOAST ─────────────────────────────────────────────────
-  function showToast(icon, msg) {
-    const toast = document.getElementById('toast');
-    document.getElementById('toastIcon').textContent = icon;
-    document.getElementById('toastMsg').textContent  = msg;
-    toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 3500);
+  // ensure at least one item row in form
+  const formItems = (t.items && t.items.length) ? t.items : [{ descripcion:'', cantidad:1, precioUnit:0 }];
+
+  const clienteOptions = state.clientes
+    .filter(c => !c.deletedAt || c.id === t.clienteId)
+    .sort((a,b)=>a.nombre.localeCompare(b.nombre))
+    .map(c => `<option value="${c.id}" ${c.id===t.clienteId?'selected':''}>${escapeHtml(c.nombre)}${c.deletedAt?' (en papelera)':''}</option>`).join('');
+
+  openModal(`
+    <div class="p-6">
+      <div class="flex items-start justify-between mb-1">
+        <div>
+          <div class="font-display text-2xl font-semibold">${isNew ? 'Nuevo ticket' : 'Editar ticket'}</div>
+          <div class="text-sm text-[var(--ink-soft)]">Orden de trabajo / nota de servicio</div>
+        </div>
+        <div class="text-right">
+          <div class="text-[11px] uppercase tracking-wider font-semibold text-[var(--ink-muted)]">Folio</div>
+          <input id="t-folio" class="input font-mono font-semibold text-right" style="width:130px" value="${escapeHtml(t.folio)}" />
+        </div>
+      </div>
+
+      <form onsubmit="event.preventDefault(); saveTicket('${id||''}')" class="mt-4">
+        <div class="grid grid-cols-3 gap-3 mb-4">
+          <div><label class="label">Fecha *</label><input id="t-fecha" type="date" class="input" required value="${t.fecha}" /></div>
+          <div class="col-span-2">
+            <label class="label">Cliente *</label>
+            <select id="t-cliente" class="select" required onchange="ticketFormCliente()">
+              <option value="">Selecciona…</option>${clienteOptions}
+            </select>
+          </div>
+        </div>
+        <div class="mb-4">
+          <label class="label">Vehículo *</label>
+          <select id="t-vehiculo" class="select" required>
+            <option value="">Primero selecciona un cliente</option>
+          </select>
+        </div>
+
+        <div class="mb-4">
+          <div class="flex items-center justify-between mb-2">
+            <label class="label" style="margin:0">Refacciones / Conceptos</label>
+            <button type="button" class="btn btn-ghost btn-sm" onclick="addTicketItem()"><i data-lucide="plus" class="w-3.5 h-3.5"></i>Agregar</button>
+          </div>
+          <div id="t-items" class="space-y-2"></div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3 mb-4">
+          <div><label class="label">Mano de obra ($)</label><input id="t-manoObra" type="number" step="0.01" class="input" value="${t.manoObra||0}" oninput="recalcTicketTotal()" /></div>
+          <div><label class="label">IVA %</label><input id="t-iva" type="number" class="input" value="${t.ivaPercent||0}" oninput="recalcTicketTotal()" /></div>
+        </div>
+        <div class="mb-4">
+          <label class="label">Descripción de la mano de obra</label>
+          <input id="t-mo-desc" class="input" value="${escapeHtml(t.descripcionManoObra||'')}" placeholder="Ej: Cambio de aceite y revisión general" />
+        </div>
+
+        <div class="mb-4">
+          <label class="label">Notas / Observaciones</label>
+          <textarea id="t-notas" class="textarea" rows="2">${escapeHtml(t.notas||'')}</textarea>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3 mb-4">
+          <div>
+            <label class="label">Estado</label>
+            <select id="t-estado" class="select">
+              <option value="pendiente" ${t.estado==='pendiente'?'selected':''}>Pendiente de pago</option>
+              <option value="pagado" ${t.estado==='pagado'?'selected':''}>Pagado</option>
+              <option value="cancelado" ${t.estado==='cancelado'?'selected':''}>Cancelado</option>
+            </select>
+          </div>
+          <div class="bg-[var(--bg)] rounded-xl p-3 border border-[var(--border)]">
+            <div class="text-[11px] uppercase tracking-wider font-semibold text-[var(--ink-muted)]">Total estimado</div>
+            <div id="t-total-display" class="font-display text-2xl font-semibold mt-1">$0.00</div>
+          </div>
+        </div>
+
+        <div class="flex justify-end gap-2 mt-6">
+          <button type="button" class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
+          <button type="submit" class="btn btn-primary"><i data-lucide="check" class="w-4 h-4"></i>${isNew?'Crear ticket':'Guardar cambios'}</button>
+        </div>
+      </form>
+    </div>
+  `);
+  // populate items
+  window._ticketItems = formItems.map(i => ({...i}));
+  renderTicketItems();
+  // populate vehicles dropdown
+  ticketFormCliente(t.vehiculoId);
+  recalcTicketTotal();
+
+  // Modal wide
+  const modal = document.querySelector('.modal');
+  if (modal) modal.classList.add('modal-wide');
+}
+
+function renderTicketItems() {
+  const host = document.getElementById('t-items');
+  if (!host) return;
+  if (!window._ticketItems.length) {
+    host.innerHTML = '<div class="text-sm text-[var(--ink-muted)] py-3 text-center border border-dashed border-[var(--border-strong)] rounded-lg">Toca "Agregar" para añadir refacciones</div>';
+    return;
+  }
+  host.innerHTML = window._ticketItems.map((it, idx) => `
+    <div class="grid grid-cols-12 gap-2 items-start">
+      <input class="input col-span-6" placeholder="Descripción" value="${escapeHtml(it.descripcion)}" oninput="updateTicketItem(${idx},'descripcion',this.value)" />
+      <input class="input col-span-2 text-right font-mono" type="number" step="0.01" placeholder="Cant" value="${it.cantidad}" oninput="updateTicketItem(${idx},'cantidad',this.value)" />
+      <input class="input col-span-3 text-right font-mono" type="number" step="0.01" placeholder="P. Unit" value="${it.precioUnit}" oninput="updateTicketItem(${idx},'precioUnit',this.value)" />
+      <button type="button" class="btn-icon col-span-1" onclick="removeTicketItem(${idx})"><i data-lucide="x" class="w-4 h-4"></i></button>
+    </div>
+  `).join('');
+  lucide.createIcons();
+}
+function addTicketItem() {
+  window._ticketItems.push({ descripcion:'', cantidad:1, precioUnit:0 });
+  renderTicketItems();
+  recalcTicketTotal();
+}
+function removeTicketItem(idx) {
+  window._ticketItems.splice(idx, 1);
+  renderTicketItems();
+  recalcTicketTotal();
+}
+function updateTicketItem(idx, field, value) {
+  if (field === 'descripcion') window._ticketItems[idx][field] = value;
+  else window._ticketItems[idx][field] = Number(value) || 0;
+  recalcTicketTotal();
+}
+function ticketFormCliente(preferredVehId) {
+  const clienteId = document.getElementById('t-cliente').value;
+  const sel = document.getElementById('t-vehiculo');
+  const vs = state.vehiculos.filter(v => !v.deletedAt && v.clienteId === clienteId);
+  if (!clienteId) {
+    sel.innerHTML = '<option value="">Primero selecciona un cliente</option>';
+    return;
+  }
+  if (vs.length === 0) {
+    sel.innerHTML = '<option value="">⚠ Este cliente no tiene vehículos registrados</option>';
+    return;
+  }
+  sel.innerHTML = vs.map(v => `<option value="${v.id}" ${v.id===preferredVehId?'selected':''}>${escapeHtml(v.marca)} ${escapeHtml(v.modelo)} · ${escapeHtml(v.placa)}</option>`).join('');
+}
+function recalcTicketTotal() {
+  const mo = Number(document.getElementById('t-manoObra')?.value) || 0;
+  const iva = Number(document.getElementById('t-iva')?.value) || 0;
+  const sub = (window._ticketItems||[]).reduce((a,i) => a + (Number(i.cantidad)||0)*(Number(i.precioUnit)||0), 0) + mo;
+  const total = sub * (1 + iva/100);
+  const disp = document.getElementById('t-total-display');
+  if (disp) disp.textContent = fmtMoney(total);
+}
+
+async function saveTicket(id) {
+  const clienteId = document.getElementById('t-cliente').value;
+  const vehiculoId = document.getElementById('t-vehiculo').value;
+  if (!clienteId) { toast('Selecciona un cliente', 'alert-circle'); return; }
+  if (!vehiculoId) { toast('Selecciona un vehículo', 'alert-circle'); return; }
+  const items = (window._ticketItems||[]).filter(i => i.descripcion?.trim());
+  const data = {
+    id: id || uid('t_'),
+    folio: document.getElementById('t-folio').value.trim() || fmtFolio(state.config.folioPrefix, state.config.nextFolio),
+    fecha: document.getElementById('t-fecha').value,
+    clienteId,
+    vehiculoId,
+    items,
+    manoObra: Number(document.getElementById('t-manoObra').value) || 0,
+    descripcionManoObra: document.getElementById('t-mo-desc').value.trim(),
+    ivaPercent: Number(document.getElementById('t-iva').value) || 0,
+    notas: document.getElementById('t-notas').value.trim(),
+    estado: document.getElementById('t-estado').value
+  };
+  if (id) {
+    const i = state.tickets.findIndex(t => t.id === id);
+    state.tickets[i] = { ...state.tickets[i], ...data };
+  } else {
+    state.tickets.push(data);
+    // Increment folio
+    state.config.nextFolio = (state.config.nextFolio || 1) + 1;
+    await saveTable('config', state.config);
+  }
+  await saveTable('tickets', state.tickets);
+  closeModal();
+  toast(id ? 'Ticket actualizado' : 'Ticket creado');
+  if (!id) { state.view_ticket_id = data.id; }
+  render();
+}
+
+async function deleteTicket(id) {
+  const t = ticketById(id);
+  const ok = await confirm2('¿Eliminar este ticket?', {
+    description: t?.folio ? `El ticket ${t.folio} se moverá a la papelera. Podrás restaurarlo después.` : 'Se moverá a la papelera. Podrás restaurarlo después.',
+    confirmText: 'Mover a papelera'
+  });
+  if (!ok) return;
+  await softDeleteEntity('tickets', id);
+  if (state.view_ticket_id === id) state.view_ticket_id = null;
+  toast('Movido a la papelera', 'trash-2');
+  render();
+}
+
+async function restoreTicket(id) {
+  await restoreEntity('tickets', id);
+  toast('Ticket restaurado', 'rotate-ccw');
+  render();
+}
+
+async function permanentDeleteTicket(id) {
+  const t = state.tickets.find(x => x.id === id);
+  const ok = await confirm2('¿Eliminar para siempre?', {
+    description: t?.folio ? `El ticket ${t.folio} se eliminará permanentemente. Esta acción NO se puede deshacer.` : 'Esta acción NO se puede deshacer.',
+    confirmText: 'Eliminar para siempre'
+  });
+  if (!ok) return;
+  await permanentDeleteEntity('tickets', id);
+  if (state.view_ticket_id === id) state.view_ticket_id = null;
+  toast('Ticket eliminado permanentemente', 'trash-2');
+  render();
+}
+
+/* ============================================================
+   VIEW: INVENTARIO
+============================================================ */
+function renderInventario(host) {
+  const activos = state.productos.filter(p => !p.deletedAt);
+  const papelera = state.productos.filter(p => p.deletedAt);
+  const inTrash = state.subview === 'trash';
+
+  if (inTrash) {
+    setActions(trashActionsHTML('productos', 'productos'));
+    return renderInventarioTrash(host, papelera);
   }
 
-  // ── 7. REGISTRAR VISITA EN FIRESTORE ─────────────────────────
-  async function registrarVisita() {
-    try {
-      const visita = {
-        timestamp:   new Date().toISOString(),
-        pagina:      window.location.href,
-        dispositivo: /Mobi|Android/i.test(navigator.userAgent) ? 'Movil' : 'Escritorio',
-        navegador:   navigator.userAgent.match(/(Chrome|Firefox|Safari|Edge|OPR)\/[\d.]+/)?.[0] || navigator.userAgent.substring(0,50),
-        idioma:      navigator.language,
-        pantalla:    screen.width + 'x' + screen.height,
-        referrer:    document.referrer || 'Directo',
-      };
-      const visRef = doc(db, 'visitas', Date.now().toString());
-      await setDoc(visRef, visita);
-    } catch(e) { console.warn('Visita no registrada:', e); }
+  setActions(trashActionsHTML('productos', 'productos', `
+    <button class="btn btn-ghost btn-sm" onclick="exportInventarioCSV()"><i data-lucide="download" class="w-4 h-4"></i>Exportar CSV</button>
+    <button class="btn btn-primary" onclick="modalProducto()"><i data-lucide="plus" class="w-4 h-4"></i>Nuevo producto</button>
+  `));
+
+  const q = (state.search||'').toLowerCase();
+  const list = activos
+    .filter(p => !q || p.nombre.toLowerCase().includes(q) || (p.sku||'').toLowerCase().includes(q) || (p.categoria||'').toLowerCase().includes(q))
+    .sort((a,b) => a.nombre.localeCompare(b.nombre));
+
+  const bajos = activos.filter(p => p.stock <= p.stockMin).length;
+
+  host.innerHTML = `
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-5">
+      <div class="card card-tight">
+        <div class="kpi-label">Productos</div>
+        <div class="font-display text-2xl font-semibold mt-1">${activos.length}</div>
+      </div>
+      <div class="card card-tight">
+        <div class="kpi-label">Unidades</div>
+        <div class="font-display text-2xl font-semibold mt-1">${activos.reduce((a,p)=>a+p.stock,0)}</div>
+      </div>
+      <div class="card card-tight" style="${bajos>0?'background:#FEF3C7;border-color:#FCD34D':''}">
+        <div class="kpi-label">Stock bajo</div>
+        <div class="font-display text-2xl font-semibold mt-1">${bajos}</div>
+      </div>
+      <div class="card card-tight">
+        <div class="kpi-label">Valor total</div>
+        <div class="font-display text-2xl font-semibold mt-1">${fmtMoney(activos.reduce((a,p)=>a+p.stock*p.precio,0))}</div>
+      </div>
+    </div>
+
+    <div class="mb-4">
+      <input class="input max-w-md" placeholder="Buscar producto, SKU o categoría…" value="${escapeHtml(state.search)}" oninput="state.search=this.value; render()" />
+    </div>
+
+    <div class="card overflow-hidden">
+      ${list.length === 0 ? emptyState('package', 'No hay productos', 'Agrega productos para llevar control del inventario.', 'Nuevo producto', 'modalProducto()') : `
+      <div class="overflow-x-auto">
+        <table class="table">
+          <thead><tr>
+            <th>Producto</th><th>SKU</th><th>Categoría</th><th>Stock</th><th>Mínimo</th><th>Precio</th><th>Valor</th><th></th>
+          </tr></thead>
+          <tbody>
+            ${list.map(p => {
+              const bajo = p.stock <= p.stockMin;
+              const thumb = p.imagen
+                ? `<img src="${p.imagen}" class="prod-thumb shrink-0" onclick="event.stopPropagation();viewFullImage('${p.imagen.replace(/'/g, "\\'")}')" alt=""/>`
+                : `<div class="prod-thumb-placeholder shrink-0"><i data-lucide="package" class="w-5 h-5"></i></div>`;
+              return `
+                <tr>
+                  <td>
+                    <div class="flex items-center gap-3">
+                      ${thumb}
+                      <div class="min-w-0">
+                        <div class="font-semibold">${escapeHtml(p.nombre)}</div>
+                        ${p.proveedor ? `<div class="text-xs text-[var(--ink-muted)] mt-0.5">${escapeHtml(p.proveedor)}</div>` : ''}
+                      </div>
+                    </div>
+                  </td>
+                  <td class="font-mono text-xs">${escapeHtml(p.sku||'—')}</td>
+                  <td><span class="badge badge-neutral">${escapeHtml(p.categoria||'—')}</span></td>
+                  <td>
+                    <div class="flex items-center gap-2">
+                      <button class="btn-icon" onclick='ajustarStock(${JSON.stringify(p.id)}, -1)' title="Restar"><i data-lucide="minus" class="w-3.5 h-3.5"></i></button>
+                      <span class="font-mono font-semibold ${bajo?'text-[var(--danger)]':''}">${p.stock}</span>
+                      <button class="btn-icon" onclick='ajustarStock(${JSON.stringify(p.id)}, 1)' title="Sumar"><i data-lucide="plus" class="w-3.5 h-3.5"></i></button>
+                      ${bajo ? '<span class="badge badge-danger">Bajo</span>' : ''}
+                    </div>
+                  </td>
+                  <td class="font-mono text-sm">${p.stockMin}</td>
+                  <td class="font-mono text-sm">${fmtMoney(p.precio)}</td>
+                  <td class="font-mono text-sm">${fmtMoney(p.stock * p.precio)}</td>
+                  <td class="text-right whitespace-nowrap">
+                    <button class="btn-icon" onclick='modalProducto(${JSON.stringify(p.id)})' title="Editar"><i data-lucide="pencil" class="w-4 h-4"></i></button>
+                    <button class="btn-icon" onclick='deleteProducto(${JSON.stringify(p.id)})' title="Mover a papelera"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                  </td>
+                </tr>
+              `;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>`}
+    </div>
+  `;
+}
+
+function renderInventarioTrash(host, list) {
+  host.innerHTML = `
+    <div class="mb-5 p-4 bg-[var(--accent-soft)] rounded-xl flex items-start gap-3" style="border:1px solid #FCA5A5">
+      <i data-lucide="info" class="w-5 h-5 shrink-0 mt-0.5" style="color:var(--accent)"></i>
+      <div class="text-sm" style="color:#7F1D1D">
+        <strong>Papelera del inventario.</strong> Aquí están los productos que eliminaste recientemente. Puedes <strong>restaurarlos</strong> al inventario activo o <strong>eliminarlos para siempre</strong>.
+      </div>
+    </div>
+    ${list.length === 0 ? `
+      <div class="card empty">
+        <div class="empty-icon"><i data-lucide="trash-2" class="w-7 h-7"></i></div>
+        <div class="font-display text-2xl text-[var(--ink)]">Papelera vacía</div>
+        <div class="text-sm mt-2 mb-5">Cuando elimines productos del inventario aparecerán aquí.</div>
+        <button class="btn btn-primary" onclick="toggleSubview()"><i data-lucide="arrow-left" class="w-4 h-4"></i>Volver al inventario</button>
+      </div>
+    ` : `
+    <div class="card overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="table">
+          <thead><tr>
+            <th>Producto</th><th>SKU</th><th>Stock guardado</th><th>Eliminado</th><th></th>
+          </tr></thead>
+          <tbody>
+            ${list.sort((a,b)=>(b.deletedAt||'').localeCompare(a.deletedAt||'')).map(p => {
+              const thumb = p.imagen
+                ? `<img src="${p.imagen}" class="prod-thumb shrink-0" onclick="event.stopPropagation();viewFullImage('${p.imagen.replace(/'/g, "\\'")}')" alt=""/>`
+                : `<div class="prod-thumb-placeholder shrink-0"><i data-lucide="package" class="w-5 h-5"></i></div>`;
+              const deletedDate = (p.deletedAt||'').slice(0,10);
+              const diasEnPapelera = daysBetween(deletedDate);
+              const diasLabel = diasEnPapelera === 0 ? 'Hoy' : diasEnPapelera === -1 ? 'Ayer' : `Hace ${-diasEnPapelera} días`;
+              return `
+                <tr style="opacity:0.75">
+                  <td>
+                    <div class="flex items-center gap-3">
+                      ${thumb}
+                      <div class="min-w-0">
+                        <div class="font-semibold">${escapeHtml(p.nombre)}</div>
+                        ${p.proveedor ? `<div class="text-xs text-[var(--ink-muted)] mt-0.5">${escapeHtml(p.proveedor)}</div>` : ''}
+                      </div>
+                    </div>
+                  </td>
+                  <td class="font-mono text-xs">${escapeHtml(p.sku||'—')}</td>
+                  <td class="font-mono text-sm">${p.stock}</td>
+                  <td class="text-sm text-[var(--ink-soft)]">${diasLabel}<div class="text-xs text-[var(--ink-muted)]">${fmtDate(deletedDate)}</div></td>
+                  <td class="text-right whitespace-nowrap">
+                    <button class="btn btn-ghost btn-sm" onclick='restoreProducto(${JSON.stringify(p.id)})'><i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>Restaurar</button>
+                    <button class="btn-icon" onclick='permanentDeleteProducto(${JSON.stringify(p.id)})' title="Eliminar para siempre"><i data-lucide="x" class="w-4 h-4"></i></button>
+                  </td>
+                </tr>
+              `;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>`}
+  `;
+}
+
+async function ajustarStock(id, delta) {
+  const p = state.productos.find(x => x.id === id);
+  if (!p) return;
+  p.stock = Math.max(0, p.stock + delta);
+  await saveTable('productos', state.productos);
+  render();
+}
+
+function modalProducto(id) {
+  const p = id ? state.productos.find(x => x.id === id) : { id:'', nombre:'', sku:'', categoria:'', stock:0, stockMin:5, precio:0, proveedor:'', imagen:'' };
+  // Hold the working image in a window var so it survives DOM updates inside the modal
+  window._productoImagen = p.imagen || '';
+  openModal(`
+    <div class="p-6">
+      <div class="font-display text-2xl font-semibold mb-1">${id ? 'Editar' : 'Nuevo'} producto</div>
+      <div class="text-sm text-[var(--ink-soft)] mb-5">Refacciones, lubricantes, consumibles.</div>
+      <form onsubmit="event.preventDefault(); saveProducto('${id||''}')">
+        <div class="space-y-4">
+          <div>
+            <label class="label">Imagen del producto</label>
+            <div id="img-zone">${imageZoneHTML()}</div>
+            <input type="file" id="f-img-input" accept="image/*" class="hidden" onchange="onProductImageSelected(event)" />
+            <input type="file" id="f-img-camera" accept="image/*" capture="environment" class="hidden" onchange="onProductImageSelected(event)" />
+          </div>
+          <div><label class="label">Nombre *</label><input id="f-nombre" class="input" required value="${escapeHtml(p.nombre)}" /></div>
+          <div class="grid grid-cols-2 gap-3">
+            <div><label class="label">SKU</label><input id="f-sku" class="input font-mono" value="${escapeHtml(p.sku)}" /></div>
+            <div><label class="label">Categoría</label><input id="f-cat" class="input" value="${escapeHtml(p.categoria)}" placeholder="Filtros, Frenos…" /></div>
+          </div>
+          <div class="grid grid-cols-3 gap-3">
+            <div><label class="label">Stock actual</label><input id="f-stock" type="number" class="input" value="${p.stock}" /></div>
+            <div><label class="label">Stock mínimo</label><input id="f-min" type="number" class="input" value="${p.stockMin}" /></div>
+            <div><label class="label">Precio</label><input id="f-precio" type="number" step="0.01" class="input" value="${p.precio}" /></div>
+          </div>
+          <div><label class="label">Proveedor</label><input id="f-prov" class="input" value="${escapeHtml(p.proveedor)}" /></div>
+        </div>
+        <div class="flex justify-end gap-2 mt-6">
+          <button type="button" class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
+          <button type="submit" class="btn btn-primary"><i data-lucide="check" class="w-4 h-4"></i>Guardar</button>
+        </div>
+      </form>
+    </div>
+  `);
+  // Drag & drop support
+  setupImageDrop();
+}
+
+function imageZoneHTML() {
+  const img = window._productoImagen;
+  if (img) {
+    return `
+      <div>
+        <img src="${img}" class="image-preview-big mb-2" alt="Imagen del producto" />
+        <div class="flex flex-wrap gap-2">
+          <button type="button" class="btn btn-ghost btn-sm" onclick="document.getElementById('f-img-input').click()"><i data-lucide="image" class="w-4 h-4"></i>Cambiar imagen</button>
+          <button type="button" class="btn btn-ghost btn-sm" onclick="document.getElementById('f-img-camera').click()"><i data-lucide="camera" class="w-4 h-4"></i>Tomar foto</button>
+          <button type="button" class="btn btn-danger btn-sm" onclick="removeProductImage()"><i data-lucide="trash-2" class="w-4 h-4"></i>Quitar</button>
+        </div>
+      </div>
+    `;
+  }
+  return `
+    <div class="image-drop" id="img-drop" onclick="document.getElementById('f-img-input').click()">
+      <div class="flex flex-col items-center gap-2">
+        <i data-lucide="image-plus" class="w-8 h-8" style="color:var(--ink-muted)"></i>
+        <div class="font-semibold text-sm">Toca para subir una foto</div>
+        <div class="text-xs text-[var(--ink-muted)]">o arrástrala aquí</div>
+        <div class="flex gap-2 mt-2" onclick="event.stopPropagation()">
+          <button type="button" class="btn btn-ghost btn-sm" onclick="document.getElementById('f-img-input').click()"><i data-lucide="upload" class="w-3.5 h-3.5"></i>Galería</button>
+          <button type="button" class="btn btn-ghost btn-sm" onclick="document.getElementById('f-img-camera').click()"><i data-lucide="camera" class="w-3.5 h-3.5"></i>Cámara</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function setupImageDrop() {
+  setTimeout(() => {
+    const drop = document.getElementById('img-drop');
+    if (!drop) return;
+    drop.addEventListener('dragover', e => { e.preventDefault(); drop.classList.add('dragging'); });
+    drop.addEventListener('dragleave', () => drop.classList.remove('dragging'));
+    drop.addEventListener('drop', e => {
+      e.preventDefault();
+      drop.classList.remove('dragging');
+      const file = e.dataTransfer.files[0];
+      if (file) processProductImage(file);
+    });
+    lucide.createIcons();
+  }, 50);
+}
+
+async function onProductImageSelected(ev) {
+  const file = ev.target.files[0];
+  if (!file) return;
+  await processProductImage(file);
+  ev.target.value = ''; // permite re-seleccionar mismo archivo
+}
+
+async function processProductImage(file) {
+  const zone = document.getElementById('img-zone');
+  if (zone) zone.innerHTML = `<div class="image-drop"><i data-lucide="loader" class="w-6 h-6 animate-spin inline"></i> Procesando imagen…</div>`;
+  lucide.createIcons();
+  try {
+    const dataUrl = await compressImage(file);
+    window._productoImagen = dataUrl;
+    refreshImageZone();
+    toast('Imagen cargada');
+  } catch (e) {
+    toast(e.message || 'Error al procesar imagen', 'alert-circle');
+    refreshImageZone();
+  }
+}
+
+function removeProductImage() {
+  window._productoImagen = '';
+  refreshImageZone();
+}
+
+function refreshImageZone() {
+  const zone = document.getElementById('img-zone');
+  if (zone) {
+    zone.innerHTML = imageZoneHTML();
+    setupImageDrop();
+    lucide.createIcons();
+  }
+}
+
+async function saveProducto(id) {
+  const data = {
+    id: id || uid('p_'),
+    nombre: document.getElementById('f-nombre').value.trim(),
+    sku: document.getElementById('f-sku').value.trim().toUpperCase(),
+    categoria: document.getElementById('f-cat').value.trim(),
+    stock: Number(document.getElementById('f-stock').value)||0,
+    stockMin: Number(document.getElementById('f-min').value)||0,
+    precio: Number(document.getElementById('f-precio').value)||0,
+    proveedor: document.getElementById('f-prov').value.trim(),
+    imagen: window._productoImagen || ''
+  };
+  if (id) {
+    const i = state.productos.findIndex(p => p.id === id);
+    state.productos[i] = { ...state.productos[i], ...data };
+  } else {
+    state.productos.push(data);
+  }
+  await saveTable('productos', state.productos);
+  window._productoImagen = '';
+  closeModal();
+  toast(id ? 'Producto actualizado' : 'Producto creado');
+  render();
+}
+
+async function deleteProducto(id) {
+  const p = state.productos.find(x => x.id === id);
+  const ok = await confirm2('¿Eliminar este producto?', {
+    description: p?.nombre ? `"${p.nombre}" se moverá a la papelera. Podrás restaurarlo después si lo eliminaste por error.` : 'El producto se moverá a la papelera. Podrás restaurarlo después.',
+    confirmText: 'Mover a papelera'
+  });
+  if (!ok) return;
+  await softDeleteEntity('productos', id);
+  toast('Movido a la papelera', 'trash-2');
+  render();
+}
+
+async function restoreProducto(id) {
+  await restoreEntity('productos', id);
+  toast('Producto restaurado', 'rotate-ccw');
+  render();
+}
+
+async function permanentDeleteProducto(id) {
+  const p = state.productos.find(x => x.id === id);
+  const ok = await confirm2('¿Eliminar para siempre?', {
+    description: p?.nombre ? `"${p.nombre}" se eliminará de forma permanente. Esta acción NO se puede deshacer.` : 'Esta acción NO se puede deshacer.',
+    confirmText: 'Eliminar para siempre'
+  });
+  if (!ok) return;
+  await permanentDeleteEntity('productos', id);
+  toast('Producto eliminado permanentemente', 'trash-2');
+  render();
+}
+
+function exportInventarioCSV() {
+  const rows = [['Nombre','SKU','Categoría','Stock','Mínimo','Precio','Proveedor','Valor']];
+  state.productos.filter(p => !p.deletedAt).forEach(p => rows.push([p.nombre, p.sku, p.categoria, p.stock, p.stockMin, p.precio, p.proveedor, (p.stock*p.precio).toFixed(2)]));
+  const csv = rows.map(r => r.map(c => `"${String(c||'').replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv], {type:'text/csv;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'inventario.csv'; a.click();
+  URL.revokeObjectURL(url);
+  toast('Inventario exportado');
+}
+
+/* ============================================================
+   VIEW: CONFIG
+============================================================ */
+function renderConfig(host) {
+  const c = state.config;
+  host.innerHTML = `
+    <div class="max-w-3xl space-y-5">
+      <div class="card card-pad">
+        <div class="font-display text-xl font-semibold mb-1">Datos del taller</div>
+        <div class="text-sm text-[var(--ink-soft)] mb-5">Aparecerán en los mensajes y tickets.</div>
+        <div class="space-y-4">
+          <div><label class="label">Nombre del taller</label><input id="cf-workshop" class="input" value="${escapeHtml(c.workshop)}" /></div>
+          <div class="grid grid-cols-3 gap-3">
+            <div><label class="label">Código país</label><input id="cf-country" class="input font-mono" value="${escapeHtml(c.country)}" placeholder="52" /></div>
+            <div class="col-span-2"><label class="label">Teléfono del taller</label><input id="cf-phone" class="input" value="${escapeHtml(c.phone)}" /></div>
+          </div>
+          <div><label class="label">Dirección</label><input id="cf-address" class="input" value="${escapeHtml(c.address)}" /></div>
+          <div><label class="label">RFC (opcional)</label><input id="cf-rfc" class="input font-mono uppercase" value="${escapeHtml(c.rfc||'')}" /></div>
+        </div>
+      </div>
+
+      <div class="card card-pad">
+        <div class="font-display text-xl font-semibold mb-1">Tickets / Órdenes</div>
+        <div class="text-sm text-[var(--ink-soft)] mb-5">Configuración para tickets imprimibles.</div>
+        <div class="grid grid-cols-3 gap-3">
+          <div><label class="label">Prefijo folio</label><input id="cf-fprefix" class="input font-mono uppercase" value="${escapeHtml(c.folioPrefix||'A')}" maxlength="3" /></div>
+          <div><label class="label">Próximo folio</label><input id="cf-fnext" type="number" class="input" value="${c.nextFolio||1}" min="1" /></div>
+          <div><label class="label">IVA %</label><input id="cf-iva" type="number" class="input" value="${c.ivaPercent||0}" min="0" max="100" /></div>
+        </div>
+        <div class="text-xs text-[var(--ink-muted)] mt-2">Ejemplo: prefijo "A" y folio 1 = <span class="font-mono">A-0001</span>. Pon IVA en 0 si no facturas.</div>
+      </div>
+
+      <div class="card card-pad">
+        <div class="font-display text-xl font-semibold mb-1">Reglas de recordatorio</div>
+        <div class="text-sm text-[var(--ink-soft)] mb-5">El sistema sugerirá contactar a los clientes según estas reglas.</div>
+        <div class="grid grid-cols-2 gap-3">
+          <div><label class="label">Próximo servicio (meses)</label><input id="cf-months" type="number" class="input" value="${c.defaultMonths}" /></div>
+          <div><label class="label">Próximo servicio (+ km)</label><input id="cf-km" type="number" class="input" value="${c.defaultKm}" /></div>
+          <div><label class="label">Avisar antes (días)</label><input id="cf-rdays" type="number" class="input" value="${c.reminderDays}" /></div>
+          <div><label class="label">Avisar antes (km)</label><input id="cf-rkm" type="number" class="input" value="${c.reminderKm}" /></div>
+        </div>
+      </div>
+
+      <div class="card card-pad">
+        <div class="font-display text-xl font-semibold mb-1">Plantillas de mensaje</div>
+        <div class="text-sm text-[var(--ink-soft)] mb-2">Edita cómo se ven los mensajes que envías a tus clientes. <strong>Las palabras entre llaves <code class="font-mono text-xs bg-[var(--bg)] px-1 rounded">{ }</code> se cambian solas con los datos reales de cada cliente</strong> — abajo de cada texto verás cómo queda al enviarlo.</div>
+        <div class="text-xs text-[var(--ink-muted)] mb-5">
+          <button type="button" onclick="showVariableHelp()" style="background:none;border:none;color:var(--accent);text-decoration:underline;cursor:pointer;font-size:12px;padding:0;font-family:inherit">Ver qué significa cada palabra automática →</button>
+        </div>
+        <div class="space-y-5">
+          <div>
+            <label class="label">WhatsApp</label>
+            <textarea id="cf-twa" class="textarea" rows="5" oninput="updateTemplatePreviews()">${escapeHtml(c.templateWhatsapp)}</textarea>
+            <div class="msg-preview-label"><i data-lucide="eye" class="w-3 h-3"></i>Así lo verá el cliente:</div>
+            <div id="prev-wa" class="msg-preview msg-preview-wa"></div>
+          </div>
+          <div>
+            <label class="label">SMS</label>
+            <textarea id="cf-tsms" class="textarea" rows="3" oninput="updateTemplatePreviews()">${escapeHtml(c.templateSms)}</textarea>
+            <div class="msg-preview-label"><i data-lucide="eye" class="w-3 h-3"></i>Así lo verá el cliente:</div>
+            <div id="prev-sms" class="msg-preview msg-preview-sms"></div>
+          </div>
+          <div>
+            <label class="label">Email</label>
+            <textarea id="cf-tmail" class="textarea" rows="6" oninput="updateTemplatePreviews()">${escapeHtml(c.templateEmail)}</textarea>
+            <div class="msg-preview-label"><i data-lucide="eye" class="w-3 h-3"></i>Así lo verá el cliente:</div>
+            <div id="prev-email" class="msg-preview msg-preview-email"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card card-pad">
+        <div class="font-display text-xl font-semibold mb-1">Datos</div>
+        <div class="text-sm text-[var(--ink-soft)] mb-4">Respaldo y restauración.</div>
+        <div class="flex flex-wrap gap-2">
+          <button class="btn btn-ghost" onclick="exportAll()"><i data-lucide="download" class="w-4 h-4"></i>Exportar todo (JSON)</button>
+          <button class="btn btn-ghost" onclick="document.getElementById('import-file').click()"><i data-lucide="upload" class="w-4 h-4"></i>Importar respaldo</button>
+          <input type="file" id="import-file" accept="application/json" class="hidden" onchange="importAll(event)" />
+          <button class="btn btn-danger" onclick="resetAll()"><i data-lucide="alert-triangle" class="w-4 h-4"></i>Reiniciar sistema</button>
+        </div>
+      </div>
+
+      <div class="flex justify-end">
+        <button class="btn btn-primary" onclick="saveConfig()"><i data-lucide="check" class="w-4 h-4"></i>Guardar configuración</button>
+      </div>
+    </div>
+  `;
+}
+
+function applyTemplateSample(template) {
+  const sample = {
+    nombre: 'Carlos Rodríguez',
+    taller: state.config.workshop || 'Taller Elvira',
+    marca: 'Nissan',
+    modelo: 'Sentra',
+    anio: '2021',
+    placa: 'XYZ-789',
+    fecha: '16 dic 2025',
+    ultimo_servicio_tipo: 'Servicio mayor',
+    ultimo_servicio_fecha: '16 jun 2025'
+  };
+  let result = String(template || '');
+  Object.entries(sample).forEach(([k, v]) => {
+    result = result.split('{' + k + '}').join(v);
+  });
+  return result;
+}
+
+function whatsappFormat(text) {
+  // *texto* se vuelve negrita en WhatsApp, _texto_ cursiva
+  return escapeHtml(text)
+    .replace(/\*([^*\n]+)\*/g, '<strong>$1</strong>')
+    .replace(/_([^_\n]+)_/g, '<em>$1</em>');
+}
+
+function updateTemplatePreviews() {
+  const wa = document.getElementById('cf-twa');
+  const sms = document.getElementById('cf-tsms');
+  const mail = document.getElementById('cf-tmail');
+  const pWa = document.getElementById('prev-wa');
+  const pSms = document.getElementById('prev-sms');
+  const pMail = document.getElementById('prev-email');
+  if (wa && pWa) {
+    const text = applyTemplateSample(wa.value);
+    pWa.innerHTML = text.trim() ? whatsappFormat(text) : '<span class="msg-preview-empty">(vacío)</span>';
+  }
+  if (sms && pSms) {
+    const text = applyTemplateSample(sms.value);
+    pSms.textContent = text.trim() || '(vacío)';
+    if (!text.trim()) pSms.innerHTML = '<span class="msg-preview-empty">(vacío)</span>';
+  }
+  if (mail && pMail) {
+    const text = applyTemplateSample(mail.value);
+    pMail.textContent = text.trim() || '(vacío)';
+    if (!text.trim()) pMail.innerHTML = '<span class="msg-preview-empty">(vacío)</span>';
+  }
+}
+
+function showVariableHelp() {
+  const vars = [
+    { tag: '{nombre}', desc: 'El nombre del cliente' },
+    { tag: '{taller}', desc: 'El nombre de tu taller' },
+    { tag: '{marca}', desc: 'La marca del auto (Toyota, Nissan…)' },
+    { tag: '{modelo}', desc: 'El modelo del auto (Corolla, Sentra…)' },
+    { tag: '{anio}', desc: 'El año del auto' },
+    { tag: '{placa}', desc: 'La placa del auto' },
+    { tag: '{fecha}', desc: 'La fecha del próximo servicio' },
+    { tag: '{ultimo_servicio_tipo}', desc: 'El último servicio realizado' },
+    { tag: '{ultimo_servicio_fecha}', desc: 'La fecha del último servicio' }
+  ];
+  openModal(`
+    <div class="p-6">
+      <div class="font-display text-2xl font-semibold mb-1">Datos automáticos</div>
+      <div class="text-sm text-[var(--ink-soft)] mb-4">Las palabras entre llaves <code class="font-mono text-xs bg-[var(--bg)] px-1.5 py-0.5 rounded">{ }</code> se reemplazan solas con los datos del cliente cuando envías el mensaje.</div>
+      <div class="p-3 bg-[var(--bg)] rounded-lg mb-4 text-sm">
+        <strong>Ejemplo:</strong><br>
+        Si escribes <em>"Hola {nombre}, tu {marca} ya necesita servicio"</em>,<br>
+        el cliente recibe: <em>"Hola Carlos, tu Nissan ya necesita servicio"</em>.
+      </div>
+      <div class="space-y-1.5">
+        ${vars.map(v => `
+          <div class="flex items-center gap-3 p-2.5 border border-[var(--border)] rounded-lg">
+            <code class="font-mono text-xs px-2 py-1 bg-[var(--bg)] rounded shrink-0">${escapeHtml(v.tag)}</code>
+            <span class="text-sm text-[var(--ink-soft)]">${escapeHtml(v.desc)}</span>
+          </div>
+        `).join('')}
+      </div>
+      <div class="mt-4 p-3 bg-[var(--warning-soft)] rounded-lg text-sm" style="color:#854D0E">
+        <i data-lucide="alert-triangle" class="w-4 h-4 inline" style="margin-top:-2px"></i>
+        <strong>Importante:</strong> Si borras las llaves, el dato no aparecerá. Por ejemplo, si quitas <code class="font-mono text-xs">{nombre}</code> el cliente no verá su nombre.
+      </div>
+      <div class="flex justify-end mt-5">
+        <button class="btn btn-primary" onclick="closeModal()">Entendido</button>
+      </div>
+    </div>
+  `);
+}
+
+async function saveConfig() {
+  state.config = {
+    ...state.config,
+    workshop: document.getElementById('cf-workshop').value.trim() || 'Taller Elvira',
+    country: document.getElementById('cf-country').value.trim().replace(/\D/g,'') || '52',
+    phone: document.getElementById('cf-phone').value.trim(),
+    address: document.getElementById('cf-address').value.trim(),
+    rfc: (document.getElementById('cf-rfc')?.value || '').trim().toUpperCase(),
+    folioPrefix: (document.getElementById('cf-fprefix')?.value || 'A').trim().toUpperCase() || 'A',
+    nextFolio: Number(document.getElementById('cf-fnext')?.value) || 1,
+    ivaPercent: Number(document.getElementById('cf-iva')?.value) || 0,
+    defaultMonths: Number(document.getElementById('cf-months').value)||6,
+    defaultKm: Number(document.getElementById('cf-km').value)||5000,
+    reminderDays: Number(document.getElementById('cf-rdays').value)||30,
+    reminderKm: Number(document.getElementById('cf-rkm').value)||500,
+    templateWhatsapp: document.getElementById('cf-twa').value,
+    templateSms: document.getElementById('cf-tsms').value,
+    templateEmail: document.getElementById('cf-tmail').value
+  };
+  await saveTable('config', state.config);
+  toast('Configuración guardada');
+  render();
+}
+
+function exportAll() {
+  const data = {
+    exportedAt: new Date().toISOString(),
+    version: 2,
+    clientes: state.clientes,
+    vehiculos: state.vehiculos,
+    servicios: state.servicios,
+    productos: state.productos,
+    tickets: state.tickets,
+    config: state.config
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'taller-elvira-respaldo-' + today() + '.json'; a.click();
+  URL.revokeObjectURL(url);
+  toast('Respaldo descargado');
+}
+
+async function importAll(ev) {
+  const file = ev.target.files[0];
+  if (!file) return;
+  const ok = await confirm2('¿Reemplazar todos los datos?', {
+    description: 'Esta acción borrará los datos actuales y los reemplazará con los del archivo de respaldo. Asegúrate de tener una copia antes de continuar.',
+    confirmText: 'Sí, reemplazar',
+    icon: 'upload'
+  });
+  if (!ok) { ev.target.value = ''; return; }
+  const text = await file.text();
+  try {
+    const data = JSON.parse(text);
+    state.clientes = data.clientes || [];
+    state.vehiculos = data.vehiculos || [];
+    state.servicios = data.servicios || [];
+    state.productos = data.productos || [];
+    state.tickets = data.tickets || [];
+    if (data.config) state.config = { ...state.config, ...data.config };
+    await persistAll();
+    toast('Datos importados correctamente');
+    render();
+  } catch (e) {
+    await alert2('Archivo inválido', {
+      description: 'No se pudo leer el archivo de respaldo: ' + (e.message || 'formato incorrecto'),
+      icon: 'alert-circle',
+      danger: true
+    });
+  }
+  ev.target.value = '';
+}
+
+async function resetAll() {
+  const ok = await confirm2('¿Eliminar todos los datos?', {
+    description: 'Se borrarán TODOS los clientes, vehículos, servicios, tickets, productos e imágenes. Esta acción NO se puede deshacer. Asegúrate de haber exportado un respaldo antes.',
+    confirmText: 'Sí, eliminar todo',
+    icon: 'alert-triangle'
+  });
+  if (!ok) return;
+  state.clientes = []; state.vehiculos = []; state.servicios = []; state.productos = []; state.tickets = [];
+  await persistAll();
+  await Storage.set('_seeded', '');
+  toast('Sistema reiniciado', 'trash-2');
+  await seedIfEmpty();
+  state.clientes = await loadTable('clientes');
+  state.vehiculos = await loadTable('vehiculos');
+  state.servicios = await loadTable('servicios');
+  state.productos = await loadTable('productos');
+  state.tickets = await loadTable('tickets');
+  render();
+}
+
+/* ============================================================
+   MODAL HELPERS
+============================================================ */
+function openModal(html) {
+  const host = document.getElementById('modal-host');
+  host.innerHTML = `<div class="modal-backdrop" onclick="if(event.target===this)closeModal()"><div class="modal fade-in">${html}</div></div>`;
+  lucide.createIcons();
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  document.getElementById('modal-host').innerHTML = '';
+  document.body.style.overflow = '';
+}
+
+function emptyState(icon, title, desc, btn, action) {
+  return `
+    <div class="empty">
+      <div class="empty-icon"><i data-lucide="${icon}" class="w-6 h-6"></i></div>
+      <div class="font-display text-2xl text-[var(--ink)]">${title}</div>
+      <div class="text-sm mt-2 mb-5">${desc}</div>
+      <button class="btn btn-primary" onclick="${action}"><i data-lucide="plus" class="w-4 h-4"></i>${btn}</button>
+    </div>
+  `;
+}
+
+
+/* ============================================================
+   CERRAR SESIÓN
+============================================================ */
+
+/*
+ * El sistema actual no incluye una pantalla de acceso.
+ * Déjalo vacío para mostrar una pantalla de "Sesión cerrada".
+ * Cuando agregues un login, cambia el valor por './login.html'.
+ */
+const LOGIN_PAGE = '';
+
+async function cerrarSesion() {
+  const confirmar = await confirm2('¿Cerrar sesión?', {
+    description:
+      'Se finalizará el acceso en este dispositivo. Los clientes, vehículos, servicios, tickets e inventario no serán eliminados.',
+    confirmText: 'Cerrar sesión',
+    cancelText: 'Permanecer',
+    danger: false,
+    icon: 'log-out'
+  });
+
+  if (!confirmar) return;
+
+  toggleSidebar(false);
+
+  const boton = document.getElementById('logout-btn');
+  if (boton) {
+    boton.classList.add('is-loading');
+    boton.innerHTML = `
+      <i data-lucide="loader-circle" class="w-4 h-4 animate-spin"></i>
+      <span>Cerrando sesión…</span>
+    `;
   }
 
-  // ── 8. REGISTRAR DESCARGA DETALLADA ──────────────────────────
-  async function registrarDescarga(platform) {
-    try {
-      const descarga = {
-        timestamp:   new Date().toISOString(),
-        plataforma:  platform === 'android' ? 'Android APK' : 'Windows ZIP',
-        dispositivo: /Mobi|Android/i.test(navigator.userAgent) ? 'Movil' : 'Escritorio',
-        navegador:   navigator.userAgent.match(/(Chrome|Firefox|Safari|Edge|OPR)\/[\d.]+/)?.[0] || navigator.userAgent.substring(0,50),
-        idioma:      navigator.language,
-        referrer:    document.referrer || 'Directo',
-      };
-      const dlRef = doc(db, 'descargas', Date.now().toString());
-      await setDoc(dlRef, descarga);
-    } catch(e) { console.warn('Descarga no registrada:', e); }
-  }
+  const overlay = document.createElement('div');
+  overlay.className = 'logout-overlay';
+  overlay.setAttribute('role', 'status');
+  overlay.setAttribute('aria-live', 'polite');
+  overlay.innerHTML = `
+    <div class="logout-card">
+      <div class="logout-symbol">
+        <i data-lucide="log-out" style="width:32px;height:32px"></i>
+      </div>
+      <div class="logout-title">Cerrando sesión</div>
+      <div class="logout-description">
+        Estamos finalizando el acceso y protegiendo la información del taller.
+      </div>
+      <div class="logout-progress"></div>
+    </div>
+  `;
 
-  // ── INICIAR ──────────────────────────────────────────────────
-  loadDownloadURLs();
-  registrarVisita();
+  document.body.appendChild(overlay);
+  document.body.style.overflow = 'hidden';
+
+  const aplicacion = document.querySelector('body > .flex.min-h-screen');
+  if (aplicacion) aplicacion.classList.add('app-logging-out');
+
+  lucide.createIcons();
+
+  /*
+   * Solo se eliminan claves de autenticación.
+   * No se utiliza localStorage.clear(), porque borraría los datos
+   * de clientes, vehículos, servicios, tickets e inventario.
+   */
+  sessionStorage.removeItem('taller_session');
+  localStorage.removeItem('taller_session');
+
+  setTimeout(() => {
+    if (LOGIN_PAGE) {
+      window.location.replace(LOGIN_PAGE);
+      return;
+    }
+
+    mostrarPantallaSesionCerrada(overlay);
+  }, 1200);
+}
+
+function mostrarPantallaSesionCerrada(overlay) {
+  overlay.innerHTML = `
+    <div class="logout-card">
+      <div class="logout-symbol">
+        <i data-lucide="shield-check" style="width:34px;height:34px"></i>
+      </div>
+      <div class="logout-title">Sesión cerrada</div>
+      <div class="logout-description">
+        El acceso se cerró correctamente. Los datos del taller permanecen
+        guardados en este dispositivo.
+      </div>
+      <button
+        type="button"
+        class="btn btn-primary logout-return-btn"
+        onclick="window.location.reload()"
+      >
+        <i data-lucide="log-in" class="w-4 h-4"></i>
+        Volver a ingresar
+      </button>
+    </div>
+  `;
+
+  lucide.createIcons();
+}
+
+/* ============================================================
+   INIT
+============================================================ */
+async function init() {
+  try {
+    await seedIfEmpty();
+    state.clientes = loadTable('clientes');
+    state.vehiculos = loadTable('vehiculos');
+    state.servicios = loadTable('servicios');
+    state.productos = loadTable('productos');
+    state.tickets = loadTable('tickets');
+    const cfg = loadTable('config', null);
+    if (cfg && !Array.isArray(cfg)) state.config = { ...state.config, ...cfg };
+    render();
+  } catch (e) {
+    console.error('Error inicializando:', e);
+    document.getElementById('view').innerHTML = `
+      <div class="card card-pad" style="max-width:520px;margin:40px auto;text-align:center">
+        <div class="font-display text-2xl mb-2">No se pudo cargar el sistema</div>
+        <div class="text-sm text-[var(--ink-soft)] mb-4">${escapeHtml(e.message||'Error desconocido')}</div>
+        <button class="btn btn-primary" onclick="location.reload()">Reintentar</button>
+      </div>`;
+  }
+}
+
+// Tecla Escape cierra modales
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && document.getElementById('modal-host').children.length) {
+    closeModal();
+  }
+});
+
+// Refrescar al volver a la pestaña (por si cambiaron los datos en otra)
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden && state.view) {
+    state.clientes = loadTable('clientes');
+    state.vehiculos = loadTable('vehiculos');
+    state.servicios = loadTable('servicios');
+    state.productos = loadTable('productos');
+    state.tickets = loadTable('tickets');
+    render();
+  }
+});
+
+init();
 </script>
 
+<!-- ══ PWA: Service Worker + Banner de instalación ══ -->
+<script>
+// Registrar Service Worker (funcionamiento offline)
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .then(r => console.log('✅ SW registrado:', r.scope))
+      .catch(e => console.warn('SW no disponible:', e));
+  });
+}
+
+// Banner "Instalar app" — aparece automáticamente en Android Chrome
+let _pwaPrompt = null;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  _pwaPrompt = e;
+
+  // Crear botón de instalación en el sidebar
+  const btnInstalar = document.createElement('div');
+  btnInstalar.id = 'pwa-install-btn';
+  btnInstalar.style.cssText = `
+    margin: 8px 10px 4px;
+    padding: 10px 14px;
+    background: #DC2626;
+    color: white;
+    border-radius: 9px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 0.15s;
+  `;
+  btnInstalar.innerHTML = '📲 Instalar app en este dispositivo';
+  btnInstalar.onmouseenter = () => btnInstalar.style.background = '#B91C1C';
+  btnInstalar.onmouseleave = () => btnInstalar.style.background = '#DC2626';
+  btnInstalar.onclick = async () => {
+    _pwaPrompt.prompt();
+    const { outcome } = await _pwaPrompt.userChoice;
+    if (outcome === 'accepted') btnInstalar.remove();
+    _pwaPrompt = null;
+  };
+
+  // Insertar al inicio del nav
+  const nav = document.getElementById('nav');
+  if (nav && nav.parentNode) nav.parentNode.insertBefore(btnInstalar, nav);
+});
+
+// Cuando ya está instalada como app
+window.addEventListener('appinstalled', () => {
+  const btn = document.getElementById('pwa-install-btn');
+  if (btn) btn.remove();
+  console.log('✅ App instalada correctamente');
+});
+</script>
 </body>
 </html>
