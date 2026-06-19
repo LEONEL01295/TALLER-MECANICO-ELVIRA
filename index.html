@@ -947,53 +947,31 @@ function serviciosByVehiculo(id) { return state.servicios.filter(s => !s.deleted
 function ultimoServicio(vehId) { return serviciosByVehiculo(vehId)[0]; }
 
 /* ============================================================
-   SEED DATA
+   INICIALIZACIÓN SIN REGISTROS DE EJEMPLO
+   Esta migración limpia una sola vez los datos anteriores guardados
+   en el navegador. Los registros nuevos se conservarán normalmente.
 ============================================================ */
-async function seedIfEmpty() {
-  const seeded = await Storage.get('_seeded');
-  if (seeded) return;
+async function prepareEmptyInitialData() {
+  const CLEAN_VERSION = '_taller_elvira_clean_v2';
 
-  const c1 = uid('c_'), c2 = uid('c_'), c3 = uid('c_'), c4 = uid('c_');
-  state.clientes = [
-    { id: c1, nombre: 'María González', telefono: '5512345678', email: 'maria@example.com', notas: 'Cliente desde 2022', createdAt: today() },
-    { id: c2, nombre: 'Carlos Rodríguez', telefono: '5598765432', email: 'carlos.r@example.com', notas: '', createdAt: today() },
-    { id: c3, nombre: 'Ana Martínez', telefono: '5544332211', email: 'ana.m@example.com', notas: 'Prefiere WhatsApp', createdAt: today() },
-    { id: c4, nombre: 'Luis Hernández', telefono: '5577889900', email: '', notas: '', createdAt: today() }
-  ];
+  // Evita borrar nuevamente los datos que el usuario capture después.
+  if (Storage.get(CLEAN_VERSION) === '1') return;
 
-  const v1 = uid('v_'), v2 = uid('v_'), v3 = uid('v_'), v4 = uid('v_'), v5 = uid('v_');
-  state.vehiculos = [
-    { id: v1, clienteId: c1, marca: 'Toyota', modelo: 'Corolla', anio: 2019, placa: 'ABC-123', color: 'Blanco', kmActual: 78500, notas: '' },
-    { id: v2, clienteId: c2, marca: 'Nissan', modelo: 'Sentra', anio: 2021, placa: 'XYZ-789', color: 'Gris', kmActual: 42300, notas: 'Garantía vigente' },
-    { id: v3, clienteId: c3, marca: 'Honda', modelo: 'Civic', anio: 2018, placa: 'JKL-456', color: 'Negro', kmActual: 95200, notas: '' },
-    { id: v4, clienteId: c1, marca: 'Ford', modelo: 'Ranger', anio: 2020, placa: 'TRK-001', color: 'Azul', kmActual: 56000, notas: 'Uso de trabajo' },
-    { id: v5, clienteId: c4, marca: 'Chevrolet', modelo: 'Aveo', anio: 2017, placa: 'AVE-222', color: 'Rojo', kmActual: 110400, notas: '' }
-  ];
+  state.clientes = [];
+  state.vehiculos = [];
+  state.servicios = [];
+  state.productos = [];
+  state.tickets = [];
 
-  const hoy = today();
-  const past = (months) => { const d = new Date(); d.setMonth(d.getMonth()-months); return d.toISOString().slice(0,10); };
+  saveTable('clientes', []);
+  saveTable('vehiculos', []);
+  saveTable('servicios', []);
+  saveTable('productos', []);
+  saveTable('tickets', []);
 
-  state.servicios = [
-    { id: uid('s_'), vehiculoId: v1, tipo: 'Cambio de aceite y filtro', descripcion: 'Aceite sintético 5W30', fecha: past(7), km: 73500, costo: 850, proxFecha: addMonths(past(7), 6), proxKm: 78500 },
-    { id: uid('s_'), vehiculoId: v2, tipo: 'Servicio mayor', descripcion: 'Frenos, aceite, filtros', fecha: past(11), km: 38000, costo: 4200, proxFecha: addMonths(past(11), 6), proxKm: 43000 },
-    { id: uid('s_'), vehiculoId: v3, tipo: 'Afinación', descripcion: 'Bujías y filtro de aire', fecha: past(3), km: 92000, costo: 1800, proxFecha: addMonths(past(3), 12), proxKm: 102000 },
-    { id: uid('s_'), vehiculoId: v4, tipo: 'Cambio de aceite', descripcion: 'Aceite mineral 25W60', fecha: past(5), km: 51200, costo: 950, proxFecha: addMonths(past(5), 6), proxKm: 56200 },
-    { id: uid('s_'), vehiculoId: v5, tipo: 'Revisión general', descripcion: 'Diagnóstico completo', fecha: past(13), km: 105000, costo: 600, proxFecha: addMonths(past(13), 6), proxKm: 110000 }
-  ];
-
-  state.productos = [
-    { id: uid('p_'), nombre: 'Aceite sintético 5W30 - 1L', sku: 'ACE-5W30', categoria: 'Lubricantes', stock: 24, stockMin: 10, precio: 280, proveedor: 'Mobil' },
-    { id: uid('p_'), nombre: 'Aceite mineral 25W60 - 1L', sku: 'ACE-25W60', categoria: 'Lubricantes', stock: 6, stockMin: 8, precio: 180, proveedor: 'Bardahl' },
-    { id: uid('p_'), nombre: 'Filtro de aceite Toyota', sku: 'FIL-TOY-01', categoria: 'Filtros', stock: 12, stockMin: 5, precio: 120, proveedor: 'Toyota OEM' },
-    { id: uid('p_'), nombre: 'Filtro de aire universal', sku: 'FIL-AIR-U1', categoria: 'Filtros', stock: 3, stockMin: 5, precio: 200, proveedor: 'Bosch' },
-    { id: uid('p_'), nombre: 'Bujía NGK Iridium', sku: 'BUJ-NGK-IR', categoria: 'Encendido', stock: 28, stockMin: 12, precio: 220, proveedor: 'NGK' },
-    { id: uid('p_'), nombre: 'Pastillas de freno cerámicas', sku: 'FRE-CER-01', categoria: 'Frenos', stock: 9, stockMin: 4, precio: 850, proveedor: 'Brembo' },
-    { id: uid('p_'), nombre: 'Líquido de frenos DOT4', sku: 'LIQ-DOT4', categoria: 'Líquidos', stock: 15, stockMin: 6, precio: 95, proveedor: 'Bosch' },
-    { id: uid('p_'), nombre: 'Anticongelante verde 1L', sku: 'ANT-VER-1L', categoria: 'Líquidos', stock: 2, stockMin: 5, precio: 110, proveedor: 'Prestone' }
-  ];
-
-  await persistAll();
-  await Storage.set('_seeded', '1');
+  // Elimina la marca usada por los antiguos datos de demostración.
+  Storage.set('_seeded', '');
+  Storage.set(CLEAN_VERSION, '1');
 }
 
 async function persistAll() {
@@ -2919,15 +2897,15 @@ function renderConfig(host) {
 
 function applyTemplateSample(template) {
   const sample = {
-    nombre: 'Carlos Rodríguez',
+    nombre: 'Nombre del cliente',
     taller: state.config.workshop || 'Taller Elvira',
-    marca: 'Nissan',
-    modelo: 'Sentra',
-    anio: '2021',
-    placa: 'XYZ-789',
-    fecha: '16 dic 2025',
-    ultimo_servicio_tipo: 'Servicio mayor',
-    ultimo_servicio_fecha: '16 jun 2025'
+    marca: 'Marca',
+    modelo: 'Modelo',
+    anio: 'Año',
+    placa: 'PLACA',
+    fecha: 'Fecha programada',
+    ultimo_servicio_tipo: 'Tipo de servicio',
+    ultimo_servicio_fecha: 'Fecha del último servicio'
   };
   let result = String(template || '');
   Object.entries(sample).forEach(([k, v]) => {
@@ -3089,14 +3067,14 @@ async function resetAll() {
   if (!ok) return;
   state.clientes = []; state.vehiculos = []; state.servicios = []; state.productos = []; state.tickets = [];
   await persistAll();
-  await Storage.set('_seeded', '');
+  Storage.set('_seeded', '');
+  Storage.set('_taller_elvira_clean_v2', '1');
   toast('Sistema reiniciado', 'trash-2');
-  await seedIfEmpty();
-  state.clientes = await loadTable('clientes');
-  state.vehiculos = await loadTable('vehiculos');
-  state.servicios = await loadTable('servicios');
-  state.productos = await loadTable('productos');
-  state.tickets = await loadTable('tickets');
+  state.clientes = loadTable('clientes');
+  state.vehiculos = loadTable('vehiculos');
+  state.servicios = loadTable('servicios');
+  state.productos = loadTable('productos');
+  state.tickets = loadTable('tickets');
   render();
 }
 
@@ -3233,7 +3211,7 @@ function mostrarPantallaSesionCerrada(overlay) {
 ============================================================ */
 async function init() {
   try {
-    await seedIfEmpty();
+    await prepareEmptyInitialData();
     state.clientes = loadTable('clientes');
     state.vehiculos = loadTable('vehiculos');
     state.servicios = loadTable('servicios');
